@@ -1,0 +1,638 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+
+<style>
+  :root{
+    --ink:#1C2B24;
+    --paper:#F5F4EE;
+    --panel:#FFFFFF;
+    --line:#DAD7C9;
+    --ben:#2F6F4F;
+    --ben-soft:#E4EEE7;
+    --isa:#A6663A;
+    --isa-soft:#F2E7DC;
+    --gold:#B98A2E;
+    --neg:#B5493B;
+    --neg-soft:#F5E4E1;
+    --muted:#6B7268;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;padding:0;background:transparent;color:var(--ink);font-family:'Inter',system-ui,sans-serif;}
+  .wrap{max-width:720px;margin:0 auto;padding:20px 16px 60px;background:var(--paper);}
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;margin:0;}
+  h1{font-size:1.5rem;letter-spacing:-0.01em;}
+  h2{font-size:1.05rem;margin-bottom:2px;}
+  .subtitle{color:var(--muted);font-size:0.88rem;margin-top:4px;line-height:1.4;}
+  .num{font-variant-numeric:tabular-nums;}
+
+  /* ---- summary bar ---- */
+  .summary{
+    display:grid;grid-template-columns:1fr 1fr;gap:1px;
+    background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;
+    margin:18px 0;
+  }
+  .summary .cell{background:var(--panel);padding:14px 14px;}
+  .summary .label{font-size:0.72rem;text-transform:none;color:var(--muted);margin-bottom:4px;}
+  .summary .value{font-family:'Fraunces',serif;font-size:1.35rem;font-weight:600;}
+  .summary .value.neg{color:var(--neg);}
+  .summary .value.pos{color:var(--ben);}
+
+  /* ---- sections ---- */
+  .section{margin-top:22px;border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden;}
+  .section-head{
+    display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+    padding:14px 16px;cursor:pointer;user-select:none;
+  }
+  .section-head .count{font-size:0.78rem;color:var(--muted);}
+  .chev{transition:transform .2s ease;color:var(--muted);font-size:0.8rem;}
+  .section.open .chev{transform:rotate(90deg);}
+  .section-body{padding:0 16px 16px;display:none;}
+  .section.open .section-body{display:block;}
+
+  .field-row{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px;}
+  .field{display:flex;flex-direction:column;gap:4px;}
+  .field label{font-size:0.85rem;color:var(--ink);display:flex;align-items:center;gap:6px;}
+  .dot{width:7px;height:7px;border-radius:50%;flex:none;}
+  .dot.ben{background:var(--ben);}
+  .dot.isa{background:var(--isa);}
+  .field .input-wrap{position:relative;}
+  .field .prefix{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.92rem;}
+  .field input[type=number]{
+    width:100%;padding:9px 11px 9px 24px;border:1px solid var(--line);border-radius:7px;
+    font-size:0.95rem;font-family:'Inter',sans-serif;background:#FDFCF9;color:var(--ink);
+  }
+  .field input[type=number].pct{padding-left:11px;padding-right:24px;}
+  .field .suffix{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.88rem;}
+  .field input:focus{outline:2px solid var(--gold);outline-offset:1px;}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .subhead{font-size:0.78rem;color:var(--muted);margin-top:16px;margin-bottom:-2px;}
+
+  .sub-toggle{
+    margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);
+  }
+  .sub-toggle button{
+    background:none;border:none;padding:0;color:var(--gold);font-size:0.85rem;cursor:pointer;
+    font-family:'Inter',sans-serif;text-decoration:underline;text-underline-offset:2px;
+  }
+  .sub-note{font-size:0.78rem;color:var(--muted);margin-top:8px;line-height:1.4;}
+
+  /* toggle pills */
+  .pillrow{display:flex;gap:6px;margin-top:10px;}
+  .pill{
+    flex:1;text-align:center;padding:8px 6px;border:1px solid var(--line);border-radius:7px;
+    font-size:0.82rem;cursor:pointer;background:#FDFCF9;color:var(--muted);
+  }
+  .pill.active{background:var(--ben-soft);border-color:var(--ben);color:var(--ben);font-weight:600;}
+
+  .slider-row{margin-top:14px;}
+  .slider-row .slabel{display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:6px;}
+  input[type=range]{width:100%;accent-color:var(--ben);}
+
+  /* ---- results ---- */
+  .results{margin-top:26px;}
+  .chart-card{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:14px 14px 6px;margin-top:14px;}
+  .chart-card .chart-title{font-size:0.88rem;font-weight:600;margin-bottom:8px;}
+  canvas{max-width:100%;}
+
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:0.82rem;}
+  th,td{text-align:right;padding:6px 5px;border-bottom:1px solid var(--line);}
+  th:first-child,td:first-child{text-align:left;}
+  thead th{color:var(--muted);font-weight:500;font-size:0.72rem;}
+  tbody tr:last-child td{font-weight:600;}
+
+  .footnote{font-size:0.76rem;color:var(--muted);margin-top:18px;line-height:1.5;}
+  .savebar{display:flex;align-items:center;justify-content:space-between;margin-top:22px;font-size:0.78rem;color:var(--muted);}
+  .savebar button{
+    background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:6px 12px;
+    font-size:0.78rem;color:var(--neg);cursor:pointer;font-family:'Inter',sans-serif;
+  }
+</style>
+
+<div class="wrap">
+  <h1>Ben &amp; Isabelle — Household Worksheet</h1>
+  <p class="subtitle">Fill in income, expenses, and assets once, then tune the growth assumptions to see how net worth and monthly cash flow play out over time. Everything saves automatically.</p>
+
+  <div class="summary">
+    <div class="cell">
+      <div class="label">Net worth in <span id="sumYearsLabel">10</span> years</div>
+      <div class="value" id="sumNetWorth">$0</div>
+    </div>
+    <div class="cell">
+      <div class="label">Avg. monthly cash flow (yr 1)</div>
+      <div class="value" id="sumCashFlow">$0</div>
+    </div>
+  </div>
+
+  <!-- INCOME -->
+  <div class="section open" data-section>
+    <div class="section-head" data-toggle>
+      <h2>Income</h2>
+      <span class="chev">▸</span>
+    </div>
+    <div class="section-body">
+      <div class="subhead">Ben</div>
+      <div class="field-row">
+        <div class="field">
+          <label><span class="dot ben"></span>Monthly income</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="benIncome" value="7500" min="0"></div>
+        </div>
+        <div class="field">
+          <label><span class="dot ben"></span>Yearly bonus</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="benYearlyBonus" value="10000" min="0"></div>
+        </div>
+        <div class="field">
+          <label><span class="dot ben"></span>Quarterly bonus</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="benQuarterlyBonus" value="0" min="0"></div>
+        </div>
+      </div>
+      <div class="subhead">Isabelle</div>
+      <div class="field-row">
+        <div class="field">
+          <label><span class="dot isa"></span>Monthly income</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="isaIncome" value="6500" min="0"></div>
+        </div>
+        <div class="field">
+          <label><span class="dot isa"></span>Yearly bonus</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="isaYearlyBonus" value="8000" min="0"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPENSES -->
+  <div class="section open" data-section>
+    <div class="section-head" data-toggle>
+      <h2>Expenses</h2>
+      <span class="chev">▸</span>
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Rent</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="rent" value="3200" min="0"></div>
+        </div>
+        <div class="field">
+          <label>Total monthly expenses (non-rent)</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="totalExpenses" value="3000" min="0"></div>
+        </div>
+      </div>
+      <div class="sub-toggle">
+        <button type="button" id="subToggleBtn">+ Break down expenses (optional)</button>
+        <div id="subFields" style="display:none;">
+          <div class="grid2" style="margin-top:12px;">
+            <div class="field">
+              <label>Dining</label>
+              <div class="input-wrap"><span class="prefix">$</span><input type="number" id="subDining" value="0" min="0"></div>
+            </div>
+            <div class="field">
+              <label>Entertainment</label>
+              <div class="input-wrap"><span class="prefix">$</span><input type="number" id="subEntertainment" value="0" min="0"></div>
+            </div>
+            <div class="field">
+              <label>Transportation</label>
+              <div class="input-wrap"><span class="prefix">$</span><input type="number" id="subTransportation" value="0" min="0"></div>
+            </div>
+            <div class="field">
+              <label>Shopping</label>
+              <div class="input-wrap"><span class="prefix">$</span><input type="number" id="subShopping" value="0" min="0"></div>
+            </div>
+          </div>
+          <div class="sub-note" id="subNote"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASSETS -->
+  <div class="section open" data-section>
+    <div class="section-head" data-toggle>
+      <h2>Existing assets</h2>
+      <span class="chev">▸</span>
+    </div>
+    <div class="section-body">
+      <div class="subhead">Brokerage</div>
+      <div class="grid2" style="margin-top:10px;">
+        <div class="field">
+          <label><span class="dot ben"></span>Ben</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="benBrokerage" value="40000" min="0"></div>
+        </div>
+        <div class="field">
+          <label><span class="dot isa"></span>Isabelle</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="isaBrokerage" value="30000" min="0"></div>
+        </div>
+      </div>
+      <div class="subhead">401(k)</div>
+      <div class="grid2" style="margin-top:10px;">
+        <div class="field">
+          <label><span class="dot ben"></span>Ben</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="ben401k" value="60000" min="0"></div>
+        </div>
+        <div class="field">
+          <label><span class="dot isa"></span>Isabelle</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="isa401k" value="50000" min="0"></div>
+        </div>
+      </div>
+      <div class="subhead">Roth IRA</div>
+      <div class="grid2" style="margin-top:10px;">
+        <div class="field">
+          <label><span class="dot ben"></span>Ben</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="benRoth" value="20000" min="0"></div>
+        </div>
+        <div class="field">
+          <label><span class="dot isa"></span>Isabelle</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="isaRoth" value="15000" min="0"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GROWTH + SAVINGS -->
+  <div class="section open" data-section>
+    <div class="section-head" data-toggle>
+      <h2>Assumptions</h2>
+      <span class="chev">▸</span>
+    </div>
+    <div class="section-body">
+      <div class="subhead">Yearly growth rates</div>
+      <div class="grid2" style="margin-top:10px;">
+        <div class="field">
+          <label>Total comp increase</label>
+          <div class="input-wrap"><input type="number" class="pct" id="compGrowth" value="4" step="0.1"><span class="suffix">%/yr</span></div>
+        </div>
+        <div class="field">
+          <label>Asset growth (market)</label>
+          <div class="input-wrap"><input type="number" class="pct" id="assetGrowth" value="7" step="0.1"><span class="suffix">%/yr</span></div>
+        </div>
+        <div class="field">
+          <label>Rent increase</label>
+          <div class="input-wrap"><input type="number" class="pct" id="rentGrowth" value="3" step="0.1"><span class="suffix">%/yr</span></div>
+        </div>
+        <div class="field">
+          <label>Expense increase</label>
+          <div class="input-wrap"><input type="number" class="pct" id="expenseGrowth" value="3" step="0.1"><span class="suffix">%/yr</span></div>
+        </div>
+      </div>
+
+      <div class="subhead">Leftover cash → savings</div>
+      <p class="sub-note" style="margin-top:4px;">Each month, whatever's left after rent and expenses is split between investing (into brokerage) and a cash reserve.</p>
+      <div class="pillrow">
+        <div class="pill active" data-invest-mode="percent">% of leftover</div>
+        <div class="pill" data-invest-mode="fixed">Fixed $ / month</div>
+      </div>
+      <div class="field-row">
+        <div class="field" id="investPctField">
+          <label>Percent invested</label>
+          <div class="input-wrap"><input type="number" class="pct" id="investPct" value="70" min="0" max="100"><span class="suffix">%</span></div>
+        </div>
+        <div class="field" id="investFixedField" style="display:none;">
+          <label>Fixed amount invested</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="investFixed" value="2000" min="0"></div>
+        </div>
+      </div>
+
+      <div class="subhead">Projection horizon</div>
+      <div class="slider-row">
+        <div class="slabel"><span>Years to project</span><span class="num"><span id="yearsVal">10</span> yrs</span></div>
+        <input type="range" id="yearsSlider" min="1" max="30" value="10">
+      </div>
+      <div class="pillrow">
+        <div class="pill active" data-view-mode="year">Yearly view</div>
+        <div class="pill" data-view-mode="month">Monthly view</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results">
+    <div class="chart-card">
+      <div class="chart-title">Net worth over time</div>
+      <canvas id="netWorthChart" height="200"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Net cash flow (income − rent − expenses)</div>
+      <canvas id="cashFlowChart" height="180"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Year-by-year summary</div>
+      <table id="summaryTable">
+        <thead>
+          <tr><th>Year</th><th>Income</th><th>Rent+Exp</th><th>Net</th><th>Net worth</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <p class="footnote">
+    All figures are pre-tax cash in vs. cash out — no tax modeling yet. Growth rates compound annually for income, rent, and expenses; asset growth compounds monthly. Invested cash is split evenly into Ben's and Isabelle's brokerage accounts. Numbers are estimates for planning, not financial advice.
+  </p>
+
+  <div class="savebar">
+    <span id="saveStatus">Saved</span>
+    <button id="resetBtn" type="button">Reset to defaults</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const ids = ["benIncome","benYearlyBonus","benQuarterlyBonus","isaIncome","isaYearlyBonus",
+    "rent","totalExpenses","subDining","subEntertainment","subTransportation","subShopping",
+    "benBrokerage","isaBrokerage","ben401k","isa401k","benRoth","isaRoth",
+    "compGrowth","assetGrowth","rentGrowth","expenseGrowth","investPct","investFixed","yearsSlider"];
+
+  let investMode = "percent";
+  let viewMode = "year";
+  let netWorthChart, cashFlowChart;
+  let saveTimer;
+
+  function val(id){ const el = document.getElementById(id); return parseFloat(el.value) || 0; }
+  function fmt(n){
+    const sign = n < 0 ? "-" : "";
+    n = Math.abs(n);
+    if(n >= 1000000) return sign + "$" + (n/1000000).toFixed(2) + "M";
+    return sign + "$" + Math.round(n).toLocaleString();
+  }
+
+  // ---- section collapse ----
+  document.querySelectorAll('[data-toggle]').forEach(head=>{
+    head.addEventListener('click', ()=>{
+      head.closest('.section').classList.toggle('open');
+    });
+  });
+
+  // ---- subcategory breakdown toggle ----
+  const subBtn = document.getElementById('subToggleBtn');
+  const subFields = document.getElementById('subFields');
+  subBtn.addEventListener('click', ()=>{
+    const showing = subFields.style.display !== 'none';
+    subFields.style.display = showing ? 'none' : 'block';
+    subBtn.textContent = showing ? '+ Break down expenses (optional)' : '– Hide breakdown';
+  });
+  function updateSubNote(){
+    const sum = val('subDining')+val('subEntertainment')+val('subTransportation')+val('subShopping');
+    const total = val('totalExpenses');
+    const note = document.getElementById('subNote');
+    if(sum === 0){ note.textContent = ''; return; }
+    const diff = total - sum;
+    if(Math.abs(diff) < 1){
+      note.textContent = 'Matches your total monthly expenses.';
+    } else {
+      note.textContent = 'Subcategories sum to ' + fmt(sum) + ', vs. ' + fmt(total) + ' entered as total (' + (diff>0?'':'over by ') + (diff>0? fmt(diff)+' unaccounted for':fmt(-diff)) + '). The total field is what drives the projection.';
+    }
+  }
+
+  // ---- invest mode pills ----
+  document.querySelectorAll('[data-invest-mode]').forEach(p=>{
+    p.addEventListener('click', ()=>{
+      document.querySelectorAll('[data-invest-mode]').forEach(x=>x.classList.remove('active'));
+      p.classList.add('active');
+      investMode = p.dataset.investMode;
+      document.getElementById('investPctField').style.display = investMode==='percent' ? '' : 'none';
+      document.getElementById('investFixedField').style.display = investMode==='fixed' ? '' : 'none';
+      recalc();
+    });
+  });
+
+  // ---- view mode pills ----
+  document.querySelectorAll('[data-view-mode]').forEach(p=>{
+    p.addEventListener('click', ()=>{
+      document.querySelectorAll('[data-view-mode]').forEach(x=>x.classList.remove('active'));
+      p.classList.add('active');
+      viewMode = p.dataset.viewMode;
+      recalc();
+    });
+  });
+
+  // ---- years slider ----
+  const yearsSlider = document.getElementById('yearsSlider');
+  yearsSlider.addEventListener('input', ()=>{
+    document.getElementById('yearsVal').textContent = yearsSlider.value;
+    document.getElementById('sumYearsLabel').textContent = yearsSlider.value;
+    recalc();
+  });
+
+  // ---- projection engine ----
+  function project(){
+    const years = parseInt(yearsSlider.value,10);
+    const months = years*12;
+
+    const benBase = val('benIncome'), benYB = val('benYearlyBonus'), benQB = val('benQuarterlyBonus');
+    const isaBase = val('isaIncome'), isaYB = val('isaYearlyBonus');
+    const rentBase = val('rent'), expBase = val('totalExpenses');
+    const compG = val('compGrowth')/100, rentG = val('rentGrowth')/100, expG = val('expenseGrowth')/100;
+    const assetG = val('assetGrowth')/100;
+    const assetMonthlyRate = Math.pow(1+assetG, 1/12) - 1;
+    const investPct = val('investPct')/100;
+    const investFixed = val('investFixed');
+
+    let assets = {
+      benBrokerage: val('benBrokerage'), isaBrokerage: val('isaBrokerage'),
+      ben401k: val('ben401k'), isa401k: val('isa401k'),
+      benRoth: val('benRoth'), isaRoth: val('isaRoth')
+    };
+    let cash = 0;
+
+    const rows = []; // per month
+    for(let m=1; m<=months; m++){
+      const yearIdx = Math.floor((m-1)/12);
+      const monthInYear = ((m-1) % 12) + 1;
+      const compFactor = Math.pow(1+compG, yearIdx);
+      const rentFactor = Math.pow(1+rentG, yearIdx);
+      const expFactor = Math.pow(1+expG, yearIdx);
+
+      const benInc = benBase*compFactor;
+      const isaInc = isaBase*compFactor;
+      let bonus = 0;
+      if(monthInYear === 12) bonus += (benYB+isaYB)*compFactor;
+      if(monthInYear % 3 === 0) bonus += benQB*compFactor;
+
+      const totalIncome = benInc+isaInc+bonus;
+      const rentM = rentBase*rentFactor;
+      const expM = expBase*expFactor;
+      const netCF = totalIncome - rentM - expM;
+
+      let invested = 0;
+      if(netCF > 0){
+        invested = investMode==='percent' ? netCF*investPct : Math.min(investFixed, netCF);
+      }
+      const cashDelta = netCF - invested;
+      cash += cashDelta;
+
+      // grow assets, then add contribution
+      Object.keys(assets).forEach(k=> assets[k] *= (1+assetMonthlyRate));
+      assets.benBrokerage += invested/2;
+      assets.isaBrokerage += invested/2;
+
+      const netWorth = Object.values(assets).reduce((a,b)=>a+b,0) + cash;
+
+      rows.push({
+        m, year: yearIdx+1, totalIncome, rentM, expM, netCF, invested, cash, netWorth,
+        assets: Object.assign({}, assets)
+      });
+    }
+    return rows;
+  }
+
+  function aggregateYearly(rows){
+    const years = {};
+    rows.forEach(r=>{
+      if(!years[r.year]) years[r.year] = {year:r.year, income:0, outflow:0, net:0, netWorth:0};
+      years[r.year].income += r.totalIncome;
+      years[r.year].outflow += (r.rentM + r.expM);
+      years[r.year].net += r.netCF;
+      years[r.year].netWorth = r.netWorth; // last month of year
+    });
+    return Object.values(years);
+  }
+
+  function recalc(){
+    updateSubNote();
+    const rows = project();
+    if(rows.length === 0) return;
+    const yearly = aggregateYearly(rows);
+    const last = rows[rows.length-1];
+
+    document.getElementById('sumNetWorth').textContent = fmt(last.netWorth);
+    const y1 = yearly[0];
+    const avgY1 = y1.net/12;
+    const cfEl = document.getElementById('sumCashFlow');
+    cfEl.textContent = fmt(avgY1);
+    cfEl.className = 'value ' + (avgY1 >= 0 ? 'pos' : 'neg');
+
+    // charts data
+    const useMonthly = viewMode === 'month';
+    let labels, netWorthSeries, cashFlowSeries, tableRows;
+    if(useMonthly){
+      labels = rows.map(r=> 'M'+r.m);
+      netWorthSeries = rows.map(r=>r.netWorth);
+      cashFlowSeries = rows.map(r=>r.netCF);
+      tableRows = rows;
+    } else {
+      labels = yearly.map(y=>'Yr '+y.year);
+      netWorthSeries = yearly.map(y=>y.netWorth);
+      cashFlowSeries = yearly.map(y=>y.net);
+      tableRows = yearly;
+    }
+
+    // net worth chart
+    const nwCtx = document.getElementById('netWorthChart');
+    if(netWorthChart) netWorthChart.destroy();
+    netWorthChart = new Chart(nwCtx, {
+      type:'line',
+      data:{ labels, datasets:[{
+        data: netWorthSeries, borderColor:'#2F6F4F', backgroundColor:'rgba(47,111,79,0.12)',
+        fill:true, tension:0.25, pointRadius:0, borderWidth:2
+      }]},
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: c=> fmt(c.raw) } } },
+        scales:{ x:{ ticks:{ maxTicksLimit: useMonthly?8:12, color:'#6B7268', font:{size:10} }, grid:{display:false} },
+                 y:{ ticks:{ callback:v=>fmt(v), color:'#6B7268', font:{size:10} }, grid:{color:'#EEEBDF'} } }
+      }
+    });
+    document.getElementById('netWorthChart').parentElement.style.height='220px';
+
+    // cash flow chart
+    const cfCtx = document.getElementById('cashFlowChart');
+    if(cashFlowChart) cashFlowChart.destroy();
+    cashFlowChart = new Chart(cfCtx, {
+      type:'bar',
+      data:{ labels, datasets:[{
+        data: cashFlowSeries,
+        backgroundColor: cashFlowSeries.map(v=> v>=0 ? 'rgba(47,111,79,0.65)' : 'rgba(181,73,59,0.65)')
+      }]},
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: c=> fmt(c.raw) } } },
+        scales:{ x:{ ticks:{ maxTicksLimit: useMonthly?8:12, color:'#6B7268', font:{size:10} }, grid:{display:false} },
+                 y:{ ticks:{ callback:v=>fmt(v), color:'#6B7268', font:{size:10} }, grid:{color:'#EEEBDF'} } }
+      }
+    });
+    document.getElementById('cashFlowChart').parentElement.style.height='200px';
+
+    // table (always yearly, regardless of chart view, for a clean overview)
+    const tbody = document.querySelector('#summaryTable tbody');
+    tbody.innerHTML = '';
+    yearly.forEach(y=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td>Yr '+y.year+'</td><td class="num">'+fmt(y.income)+'</td><td class="num">'+fmt(y.outflow)+'</td><td class="num">'+fmt(y.net)+'</td><td class="num">'+fmt(y.netWorth)+'</td>';
+      tbody.appendChild(tr);
+    });
+
+    scheduleSave();
+  }
+
+  // ---- persistence ----
+  function collectState(){
+    const state = {};
+    ids.forEach(id=> state[id] = document.getElementById(id).value);
+    state.investMode = investMode;
+    state.viewMode = viewMode;
+    return state;
+  }
+  function applyState(state){
+    ids.forEach(id=>{ if(state[id] !== undefined) document.getElementById(id).value = state[id]; });
+    if(state.investMode){
+      investMode = state.investMode;
+      document.querySelectorAll('[data-invest-mode]').forEach(p=>{
+        p.classList.toggle('active', p.dataset.investMode === investMode);
+      });
+      document.getElementById('investPctField').style.display = investMode==='percent' ? '' : 'none';
+      document.getElementById('investFixedField').style.display = investMode==='fixed' ? '' : 'none';
+    }
+    if(state.viewMode){
+      viewMode = state.viewMode;
+      document.querySelectorAll('[data-view-mode]').forEach(p=>{
+        p.classList.toggle('active', p.dataset.viewMode === viewMode);
+      });
+    }
+    document.getElementById('yearsVal').textContent = document.getElementById('yearsSlider').value;
+    document.getElementById('sumYearsLabel').textContent = document.getElementById('yearsSlider').value;
+  }
+
+  function scheduleSave(){
+    const statusEl = document.getElementById('saveStatus');
+    statusEl.textContent = 'Saving…';
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async ()=>{
+      try{
+        await window.storage.set('worksheet:inputs', JSON.stringify(collectState()));
+        statusEl.textContent = 'Saved';
+      }catch(e){
+        statusEl.textContent = 'Could not save';
+        console.error(e);
+      }
+    }, 500);
+  }
+
+  async function loadState(){
+    try{
+      const res = await window.storage.get('worksheet:inputs');
+      if(res && res.value){
+        applyState(JSON.parse(res.value));
+      }
+    }catch(e){
+      // no saved state yet — that's fine
+    }
+    recalc();
+  }
+
+  document.getElementById('resetBtn').addEventListener('click', async ()=>{
+    if(!confirm('Reset all fields to their starting defaults?')) return;
+    try{ await window.storage.delete('worksheet:inputs'); }catch(e){}
+    location.reload();
+  });
+
+  // wire up recalculation
+  ids.forEach(id=>{
+    document.getElementById(id).addEventListener('input', ()=>{
+      if(id==='yearsSlider') return; // handled separately
+      recalc();
+    });
+  });
+
+  loadState();
+})();
+</script>
