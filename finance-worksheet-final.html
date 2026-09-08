@@ -325,7 +325,12 @@
 
   <div class="savebar">
     <span id="saveStatus">Saved</span>
-    <button id="resetBtn" type="button">Reset to defaults</button>
+    <div style="display:flex;gap:8px;">
+      <button id="exportBtn" type="button">Export</button>
+      <label id="importLabel" for="importFile" style="background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:6px 12px;font-size:0.78rem;color:var(--ink);cursor:pointer;font-family:'Inter',sans-serif;">Import</label>
+      <input type="file" id="importFile" accept="application/json" style="display:none;">
+      <button id="resetBtn" type="button">Reset</button>
+    </div>
   </div>
 </div>
 
@@ -772,8 +777,17 @@
     document.getElementById('sumYearsLabel').textContent = document.getElementById('yearsSlider').value;
   }
 
+  const storageAvailable = (typeof window !== 'undefined') && window.storage
+    && typeof window.storage.set === 'function'
+    && typeof window.storage.get === 'function';
+
   function scheduleSave(){
     const statusEl = document.getElementById('saveStatus');
+    if(!storageAvailable){
+      statusEl.textContent = 'Working locally — use Export to keep your numbers';
+      statusEl.style.color = 'var(--muted)';
+      return;
+    }
     statusEl.textContent = 'Saving…';
     clearTimeout(saveTimer);
     saveTimer = setTimeout(()=> attemptSave(0), 500);
@@ -788,27 +802,28 @@
       statusEl.style.cursor = 'default';
       statusEl.style.color = '';
     }catch(e){
-      console.warn('Autosave attempt failed (will retry):', e);
-      if(retryCount < 2){
-        setTimeout(()=> attemptSave(retryCount+1), 1500 * (retryCount+1));
-        statusEl.textContent = 'Saving… (retrying)';
+      console.warn('Autosave failed:', e);
+      if(retryCount < 1){
+        setTimeout(()=> attemptSave(retryCount+1), 1500);
       } else {
-        statusEl.textContent = 'Autosave failed — tap to retry';
+        statusEl.textContent = 'Autosave unavailable — use Export to keep your numbers';
         statusEl.style.color = 'var(--neg)';
-        statusEl.style.cursor = 'pointer';
-        statusEl.onclick = ()=> attemptSave(0);
+        statusEl.style.cursor = 'default';
+        statusEl.onclick = null;
       }
     }
   }
 
   async function loadState(){
-    try{
-      const res = await window.storage.get('worksheet:inputs');
-      if(res && res.value){
-        applyState(JSON.parse(res.value));
+    if(storageAvailable){
+      try{
+        const res = await window.storage.get('worksheet:inputs');
+        if(res && res.value){
+          applyState(JSON.parse(res.value));
+        }
+      }catch(e){
+        // no saved state yet
       }
-    }catch(e){
-      // no saved state yet
     }
     renderAssets();
     renderExpenses();
@@ -816,9 +831,41 @@
     recalc();
   }
 
+  document.getElementById('exportBtn').addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(collectState(), null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'household-worksheet.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('importFile').addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const parsed = JSON.parse(reader.result);
+        applyState(parsed);
+        renderAssets();
+        renderExpenses();
+        renderDeductions();
+        recalc();
+      }catch(err){
+        alert('Could not read that file — make sure it\'s a worksheet export.');
+        console.error(err);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
   document.getElementById('resetBtn').addEventListener('click', async ()=>{
     if(!confirm('Reset all fields to their starting defaults?')) return;
-    try{ await window.storage.delete('worksheet:inputs'); }catch(e){}
+    if(storageAvailable){
+      try{ await window.storage.delete('worksheet:inputs'); }catch(e){}
+    }
     location.reload();
   });
 
