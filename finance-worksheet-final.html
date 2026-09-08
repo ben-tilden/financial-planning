@@ -94,7 +94,9 @@
   .results{margin-top:26px;}
   .chart-card{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:14px 14px 6px;margin-top:14px;}
   .chart-card .chart-title{font-size:0.88rem;font-weight:600;margin-bottom:8px;}
-  canvas{max-width:100%;}
+  .chart-canvas-wrap{position:relative;width:100%;height:220px;}
+  .chart-canvas-wrap.short{height:180px;}
+  .chart-canvas-wrap canvas{max-width:100%;}
 
   table{width:100%;border-collapse:collapse;margin-top:10px;font-size:0.82rem;}
   th,td{text-align:right;padding:6px 5px;border-bottom:1px solid var(--line);}
@@ -308,11 +310,11 @@
   <div class="results">
     <div class="chart-card">
       <div class="chart-title">Net worth over time</div>
-      <canvas id="netWorthChart" height="200"></canvas>
+      <div class="chart-canvas-wrap"><canvas id="netWorthChart"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Net cash flow (income − rent − expenses)</div>
-      <canvas id="cashFlowChart" height="180"></canvas>
+      <div class="chart-canvas-wrap short"><canvas id="cashFlowChart"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Year-by-year summary</div>
@@ -532,7 +534,6 @@
                  y:{ ticks:{ callback:v=>fmt(v), color:'#6B7268', font:{size:10} }, grid:{color:'#EEEBDF'} } }
       }
     });
-    document.getElementById('netWorthChart').parentElement.style.height='220px';
 
     // cash flow chart
     const cfCtx = document.getElementById('cashFlowChart');
@@ -550,7 +551,6 @@
                  y:{ ticks:{ callback:v=>fmt(v), color:'#6B7268', font:{size:10} }, grid:{color:'#EEEBDF'} } }
       }
     });
-    document.getElementById('cashFlowChart').parentElement.style.height='200px';
 
     // table (always yearly, regardless of chart view, for a clean overview)
     const tbody = document.querySelector('#summaryTable tbody');
