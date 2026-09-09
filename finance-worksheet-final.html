@@ -43,7 +43,7 @@
     background:var(--panel);color:var(--ink);font-size:0.8rem;cursor:pointer;font-family:'Inter',sans-serif;float:right;
   }
   .header-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
-  h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;margin:0;}
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;margin:0;color:var(--ink);}
   h1{font-size:1.5rem;letter-spacing:-0.01em;}
   h2{font-size:1.05rem;margin-bottom:2px;}
   .subtitle{color:var(--muted);font-size:0.88rem;margin-top:4px;line-height:1.4;}
@@ -57,7 +57,7 @@
   }
   .summary .cell{background:var(--panel);padding:14px 14px;}
   .summary .label{font-size:0.72rem;color:var(--muted);margin-bottom:4px;}
-  .summary .value{font-family:'Fraunces',serif;font-size:1.35rem;font-weight:600;}
+  .summary .value{font-family:'Fraunces',serif;font-size:1.35rem;font-weight:600;color:var(--ink);}
   .summary .value.neg{color:var(--neg);}
   .summary .value.pos{color:var(--ben);}
 
@@ -145,7 +145,7 @@
 
   .tax-row{border:1px solid var(--line);border-radius:8px;background:var(--input-bg);padding:11px;margin-top:10px;}
   .tax-row-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px;}
-  .tax-label{font-size:0.88rem;font-weight:600;}
+  .tax-label{font-size:0.88rem;font-weight:600;color:var(--ink);}
   .tax-estimate{font-size:0.8rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;}
   .tax-custom{margin-top:8px;}
   .tax-custom .input-wrap input{padding-left:20px;}
@@ -188,8 +188,8 @@
   .asset-row .input-wrap .prefix{left:8px;font-size:0.82rem;}
   .asset-row .mini-label{font-size:0.72rem;color:var(--muted);display:block;margin-bottom:3px;}
 
-  .accounts-today{width:100%;border-collapse:collapse;font-size:0.8rem;margin-top:10px;}
-  .accounts-today th,.accounts-today td{text-align:right;padding:6px 5px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  .accounts-today{width:100%;border-collapse:collapse;font-size:0.8rem;margin-top:10px;color:var(--ink);}
+  .accounts-today th,.accounts-today td{text-align:right;padding:6px 5px;border-bottom:1px solid var(--line);white-space:nowrap;color:var(--ink);}
   .accounts-today th:first-child,.accounts-today td:first-child{text-align:left;}
   .accounts-today thead th{color:var(--muted);font-weight:500;font-size:0.7rem;}
   .liquidity-tag{font-size:0.7rem;padding:2px 6px;border-radius:10px;white-space:nowrap;}
@@ -206,8 +206,8 @@
   .chart-canvas-wrap canvas{max-width:100%;max-height:100%;}
 
   .table-wrap{overflow-x:auto;margin-top:10px;}
-  table{width:100%;min-width:640px;border-collapse:collapse;font-size:0.8rem;}
-  th,td{text-align:right;padding:6px 5px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  table{width:100%;min-width:640px;border-collapse:collapse;font-size:0.8rem;color:var(--ink);}
+  th,td{text-align:right;padding:6px 5px;border-bottom:1px solid var(--line);white-space:nowrap;color:var(--ink);}
   th:first-child,td:first-child{text-align:left;}
   thead th{color:var(--muted);font-weight:500;font-size:0.7rem;}
   tbody tr:last-child td{font-weight:600;}
