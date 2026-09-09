@@ -120,6 +120,60 @@
   .ded-row .input-wrap input{padding-left:20px;}
   .ded-row .input-wrap .prefix{left:8px;font-size:0.82rem;}
 
+  .tax-row{border:1px solid var(--line);border-radius:8px;background:#FDFCF9;padding:11px;margin-top:10px;}
+  .tax-row-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px;}
+  .tax-label{font-size:0.88rem;font-weight:600;}
+  .tax-estimate{font-size:0.8rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .tax-custom{margin-top:8px;}
+  .tax-custom .input-wrap input{padding-left:20px;}
+  .tax-custom .prefix{left:8px;font-size:0.85rem;}
+
+  .evt-row{
+    display:flex;flex-direction:column;gap:8px;padding:11px;border:1px solid var(--line);border-radius:8px;background:#FDFCF9;
+  }
+  .evt-row .evt-top{display:grid;grid-template-columns:1fr auto 26px;gap:8px;align-items:center;}
+  .evt-row .evt-mid{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end;}
+  .evt-row .evt-duration-n{display:none;}
+  .evt-row.show-duration-n .evt-duration-n{display:block;}
+  .evt-row .evt-recurring{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .evt-row.onetime .evt-recurring{display:none;}
+  .evt-row select,.evt-row input[type=text],.evt-row input[type=number]{font-size:0.85rem;padding:7px 9px;}
+  .evt-row .input-wrap input{padding-left:20px;}
+  .evt-row .input-wrap .prefix{left:8px;font-size:0.82rem;}
+  .evt-row .mini-label{font-size:0.72rem;color:var(--muted);display:block;margin-bottom:3px;}
+  .evt-enable{display:flex;align-items:center;gap:5px;font-size:0.74rem;color:var(--muted);white-space:nowrap;}
+  .evt-enable input{width:15px;height:15px;accent-color:var(--ben);}
+  .evt-impact{font-size:0.78rem;font-weight:600;padding-top:8px;border-top:1px dashed var(--line);margin-top:2px;}
+  .evt-impact.pos{color:var(--ben);}
+  .evt-impact.neg{color:var(--neg);}
+  .evt-impact.neutral{color:var(--muted);font-weight:400;}
+
+  .life-summary{
+    border:1px solid var(--line);border-radius:8px;background:var(--ben-soft);padding:12px;margin-top:10px;font-size:0.85rem;line-height:1.5;
+  }
+  .life-summary b{font-family:'Fraunces',serif;}
+
+  .asset-row{
+    display:flex;flex-direction:column;gap:8px;padding:11px;border:1px solid var(--line);border-radius:8px;background:#FDFCF9;
+  }
+  .asset-row .asset-top{display:grid;grid-template-columns:1fr auto 26px;gap:8px;align-items:center;}
+  .asset-row .asset-mid{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end;}
+  .asset-row .asset-basis{display:none;}
+  .asset-row.show-basis .asset-basis{display:block;}
+  .asset-row select,.asset-row input[type=text],.asset-row input[type=number]{font-size:0.85rem;padding:7px 9px;}
+  .asset-row .input-wrap input{padding-left:20px;}
+  .asset-row .input-wrap .prefix{left:8px;font-size:0.82rem;}
+  .asset-row .mini-label{font-size:0.72rem;color:var(--muted);display:block;margin-bottom:3px;}
+
+  .accounts-today{width:100%;border-collapse:collapse;font-size:0.8rem;margin-top:10px;}
+  .accounts-today th,.accounts-today td{text-align:right;padding:6px 5px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  .accounts-today th:first-child,.accounts-today td:first-child{text-align:left;}
+  .accounts-today thead th{color:var(--muted);font-weight:500;font-size:0.7rem;}
+  .liquidity-tag{font-size:0.7rem;padding:2px 6px;border-radius:10px;white-space:nowrap;}
+  .liquidity-tag.liquid{background:var(--ben-soft);color:var(--ben);}
+  .liquidity-tag.basis{background:#F4EBD6;color:var(--gold);}
+  .liquidity-tag.restricted{background:var(--neg-soft);color:var(--neg);}
+
   /* ---- results ---- */
   .results{margin-top:26px;}
   .chart-card{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:14px 14px 6px;margin-top:14px;}
@@ -129,7 +183,7 @@
   .chart-canvas-wrap canvas{max-width:100%;max-height:100%;}
 
   .table-wrap{overflow-x:auto;margin-top:10px;}
-  table{width:100%;min-width:480px;border-collapse:collapse;font-size:0.8rem;}
+  table{width:100%;min-width:640px;border-collapse:collapse;font-size:0.8rem;}
   th,td{text-align:right;padding:6px 5px;border-bottom:1px solid var(--line);white-space:nowrap;}
   th:first-child,td:first-child{text-align:left;}
   thead th{color:var(--muted);font-weight:500;font-size:0.7rem;}
@@ -207,6 +261,72 @@
     </div>
   </div>
 
+  <!-- TAXES -->
+  <div class="section open" data-section>
+    <div class="section-head" data-toggle>
+      <h2>Taxes</h2>
+      <span class="chev">▸</span>
+    </div>
+    <div class="section-body">
+      <p class="sub-note">Estimated from simplified 2024 federal, NY State, and NYC brackets, applied to income after your paycheck deductions above. This is a planning estimate, not tax advice — it skips credits, itemized deductions, FICA, and the Roth-vs-traditional distinction (all deductions above are treated as pre-tax). Override any line if you have a better number.</p>
+      <div class="field-row">
+        <div class="field">
+          <label>Filing status</label>
+          <select id="filingStatus">
+            <option value="mfj" selected>Married filing jointly</option>
+            <option value="single">Single</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid2" style="margin-top:10px;">
+        <div class="field">
+          <label>Federal standard deduction</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="fedStdDeduction" value="29200" min="0"></div>
+        </div>
+        <div class="field">
+          <label>NY standard deduction</label>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="nyStdDeduction" value="16050" min="0"></div>
+        </div>
+      </div>
+
+      <div class="tax-row">
+        <div class="tax-row-top"><span class="tax-label">Federal income tax</span><span class="tax-estimate" id="fedEstimate">≈ $0/mo</span></div>
+        <select id="fedTaxMode">
+          <option value="auto" selected>Auto-estimate from brackets</option>
+          <option value="custom">Custom monthly amount</option>
+          <option value="exclude">Exclude</option>
+        </select>
+        <div class="tax-custom" id="fedTaxCustomWrap" style="display:none;">
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="fedTaxCustom" value="0" min="0"></div>
+        </div>
+      </div>
+
+      <div class="tax-row">
+        <div class="tax-row-top"><span class="tax-label">NY State income tax</span><span class="tax-estimate" id="nyEstimate">≈ $0/mo</span></div>
+        <select id="nyTaxMode">
+          <option value="auto" selected>Auto-estimate from brackets</option>
+          <option value="custom">Custom monthly amount</option>
+          <option value="exclude">Exclude</option>
+        </select>
+        <div class="tax-custom" id="nyTaxCustomWrap" style="display:none;">
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="nyTaxCustom" value="0" min="0"></div>
+        </div>
+      </div>
+
+      <div class="tax-row">
+        <div class="tax-row-top"><span class="tax-label">NYC income tax</span><span class="tax-estimate" id="nycEstimate">≈ $0/mo</span></div>
+        <select id="nycTaxMode">
+          <option value="auto" selected>Auto-estimate from brackets</option>
+          <option value="custom">Custom monthly amount</option>
+          <option value="exclude">Exclude</option>
+        </select>
+        <div class="tax-custom" id="nycTaxCustomWrap" style="display:none;">
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="nycTaxCustom" value="0" min="0"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- EXPENSES -->
   <div class="section open" data-section>
     <div class="section-head" data-toggle>
@@ -234,7 +354,7 @@
       <span class="chev">▸</span>
     </div>
     <div class="section-body">
-      <p class="sub-note">Add as many accounts as you'd like — brokerage, 401k, Roth, HSA, whatever. Check "Auto-invest" on the accounts that should receive your monthly leftover cash (set below in Assumptions).</p>
+      <p class="sub-note">Add as many accounts as you'd like. Check "Auto-invest" on the accounts that should receive your monthly leftover cash (set below in Assumptions). Set "Liquidity" so the tool knows what you could actually tap without penalty — e.g. for a house down payment.</p>
       <div class="dyn-list" id="assetsList"></div>
       <button type="button" class="dyn-add" data-add="asset">+ Add account</button>
     </div>
@@ -284,6 +404,13 @@
         </div>
       </div>
 
+      <p class="sub-note" style="margin-top:14px;">Of that invested amount, how much goes to your liquid (brokerage) accounts vs. your Roth-style, contributions-only accounts (e.g. backdoor / mega backdoor Roth)? More to Roth means more tax-free growth but less you can touch without penalty; more to brokerage means the opposite. This only affects accounts you've checked "Auto-invest" on.</p>
+      <div class="slider-row">
+        <div class="slabel"><span>Brokerage ←→ Roth-style (tax-advantaged)</span><span class="num"><span id="rothSplitVal">0</span>% to Roth</span></div>
+        <input type="range" id="rothSplitPct" min="0" max="100" value="0">
+      </div>
+      <div class="sub-note" id="splitPreview" style="margin-top:6px;"></div>
+
       <div class="subhead">Projection horizon</div>
       <div class="slider-row">
         <div class="slabel"><span>Years to project</span><span class="num"><span id="yearsVal">10</span> yrs</span></div>
@@ -296,14 +423,53 @@
     </div>
   </div>
 
+  <!-- LIFE EVENTS -->
+  <div class="section open" data-section>
+    <div class="section-head" data-toggle>
+      <h2>Life events</h2>
+      <span class="chev">▸</span>
+    </div>
+    <div class="section-body">
+      <p class="sub-note">Model anything — a kid, quitting for art school, a promotion, a layoff, an inheritance. Name it, pick when it starts and how long it lasts, then fill in whichever effects apply: an ongoing change to income, an ongoing change to expenses, and/or a one-time amount. Leave any of the three at $0 if they don't apply. Combine several events to build out a bigger story (e.g. income drops for a few years, then a new event picks it back up later).</p>
+      <div class="dyn-list" id="lifeEventsList"></div>
+      <button type="button" class="dyn-add" data-add="lifeEvent">+ Add life event</button>
+      <div class="life-summary" id="lifeSummary" style="display:none;"></div>
+    </div>
+  </div>
+
   <!-- RESULTS -->
   <div class="results">
+    <div class="chart-card">
+      <div class="chart-title">Individual accounts — today</div>
+      <div class="table-wrap">
+        <table class="accounts-today" id="accountsTodayTable">
+          <thead>
+            <tr><th>Account</th><th>Balance</th><th>Liquidity</th><th>Accessible now</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="sub-note" id="accessibleTodaySummary" style="margin-top:10px;"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Accessible (penalty-free) net worth over time</div>
+      <div class="chart-canvas-wrap"><canvas id="liquidChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Individual accounts — by year</div>
+      <div class="table-wrap">
+        <table id="accountsByYearTable">
+          <thead><tr id="accountsByYearHead"></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
     <div class="chart-card">
       <div class="chart-title">Net worth over time</div>
       <div class="chart-canvas-wrap"><canvas id="netWorthChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">Net cash flow (income − deductions − rent − expenses)</div>
+      <div class="chart-title">Net cash flow (income − deductions − taxes − rent − expenses)</div>
       <div class="chart-canvas-wrap short"><canvas id="cashFlowChart"></canvas></div>
     </div>
     <div class="chart-card">
@@ -311,7 +477,7 @@
       <div class="table-wrap">
         <table id="summaryTable">
           <thead>
-            <tr><th>Year</th><th>Income</th><th>Deduct.</th><th>Rent+Exp</th><th>Net</th><th>Net worth</th></tr>
+            <tr><th>Year</th><th>Income</th><th>Deduct.</th><th>Taxes</th><th>Rent+Exp</th><th>Net</th><th>Net worth</th><th>Events Δ</th></tr>
           </thead>
           <tbody></tbody>
         </table>
@@ -320,7 +486,7 @@
   </div>
 
   <p class="footnote">
-    All figures are pre-tax cash in vs. cash out — no tax modeling yet. Growth rates compound annually for income, deductions, rent, and expenses; asset growth compounds monthly. Numbers are estimates for planning, not financial advice.
+    Cash flow nets out estimated taxes (see the Taxes section for assumptions and overrides). Growth rates compound annually for income, deductions, rent, and expenses; asset growth compounds monthly. "Contributions only" liquidity is modeled like a Roth IRA — new contributions are immediately accessible, growth on top isn't until 59½ (a few thousand may be exempt for a first home; not modeled here). Roth 401(k)s follow stricter pro-rata rules in real life, so if you've marked one "contributions only," treat that number as optimistic. Numbers are estimates for planning, not financial or tax advice.
   </p>
 
   <div class="savebar">
@@ -337,7 +503,87 @@
 <script>
 (function(){
   const scalarIds = ["benIncome","benYearlyBonus","benQuarterlyBonus","isaIncome","isaYearlyBonus",
-    "rent","compGrowth","assetGrowth","rentGrowth","expenseGrowth","investPct","investFixed","yearsSlider"];
+    "rent","compGrowth","assetGrowth","rentGrowth","expenseGrowth","investPct","investFixed","rothSplitPct","yearsSlider",
+    "filingStatus","fedStdDeduction","nyStdDeduction",
+    "fedTaxMode","fedTaxCustom","nyTaxMode","nyTaxCustom","nycTaxMode","nycTaxCustom"];
+
+  // ---- simplified ~2024 tax brackets (annual, cumulative upper bounds) ----
+  const FED_MFJ = [
+    {upTo:23200, rate:0.10},{upTo:94300, rate:0.12},{upTo:201050, rate:0.22},
+    {upTo:383900, rate:0.24},{upTo:487450, rate:0.32},{upTo:731200, rate:0.35},{upTo:Infinity, rate:0.37}
+  ];
+  const FED_SINGLE = [
+    {upTo:11600, rate:0.10},{upTo:47150, rate:0.12},{upTo:100525, rate:0.22},
+    {upTo:191950, rate:0.24},{upTo:243725, rate:0.32},{upTo:609350, rate:0.35},{upTo:Infinity, rate:0.37}
+  ];
+  const NY_MFJ = [
+    {upTo:17150, rate:0.04},{upTo:23600, rate:0.045},{upTo:27900, rate:0.0525},{upTo:161550, rate:0.0585},
+    {upTo:323200, rate:0.0625},{upTo:2155350, rate:0.0685},{upTo:5000000, rate:0.0965},
+    {upTo:25000000, rate:0.103},{upTo:Infinity, rate:0.109}
+  ];
+  const NY_SINGLE = [
+    {upTo:8500, rate:0.04},{upTo:11700, rate:0.045},{upTo:13900, rate:0.0525},{upTo:80650, rate:0.0585},
+    {upTo:215400, rate:0.0625},{upTo:1077550, rate:0.0685},{upTo:5000000, rate:0.0965},
+    {upTo:25000000, rate:0.103},{upTo:Infinity, rate:0.109}
+  ];
+  const NYC_MFJ = [
+    {upTo:21600, rate:0.03078},{upTo:45000, rate:0.03762},{upTo:90000, rate:0.03819},{upTo:Infinity, rate:0.03876}
+  ];
+  const NYC_SINGLE = [
+    {upTo:12000, rate:0.03078},{upTo:25000, rate:0.03762},{upTo:50000, rate:0.03819},{upTo:Infinity, rate:0.03876}
+  ];
+  function taxBrackets(status){
+    return status==='single' ? {federal:FED_SINGLE, ny:NY_SINGLE, nyc:NYC_SINGLE} : {federal:FED_MFJ, ny:NY_MFJ, nyc:NYC_MFJ};
+  }
+  function progressiveTax(income, brackets){
+    let tax=0, prev=0;
+    for(const b of brackets){
+      if(income<=prev) break;
+      const capped = Math.min(income, b.upTo);
+      tax += (capped-prev)*b.rate;
+      prev = b.upTo;
+      if(income<=b.upTo) break;
+    }
+    return tax;
+  }
+  // annualGross / annualDeductions are for one projection year; compFactor scales any custom overrides consistently
+  function computeYearlyTaxes(compFactor, annualGross, annualDeductions){
+    const status = document.getElementById('filingStatus').value;
+    const brackets = taxBrackets(status);
+    const fedStd = val('fedStdDeduction');
+    const nyStd = val('nyStdDeduction');
+    const fedTaxable = Math.max(0, annualGross - annualDeductions - fedStd);
+    const nyTaxable = Math.max(0, annualGross - annualDeductions - nyStd);
+
+    const fedMode = document.getElementById('fedTaxMode').value;
+    const nyMode = document.getElementById('nyTaxMode').value;
+    const nycMode = document.getElementById('nycTaxMode').value;
+
+    const fedAnnual = fedMode==='auto' ? progressiveTax(fedTaxable, brackets.federal) : fedMode==='custom' ? val('fedTaxCustom')*12*compFactor : 0;
+    const nyAnnual = nyMode==='auto' ? progressiveTax(nyTaxable, brackets.ny) : nyMode==='custom' ? val('nyTaxCustom')*12*compFactor : 0;
+    const nycAnnual = nycMode==='auto' ? progressiveTax(nyTaxable, brackets.nyc) : nycMode==='custom' ? val('nycTaxCustom')*12*compFactor : 0;
+
+    return { fedMonthly: fedAnnual/12, nyMonthly: nyAnnual/12, nycMonthly: nycAnnual/12 };
+  }
+  function updateTaxEstimates(){
+    const annualGross0 = 12*(val('benIncome')+val('isaIncome')) + (val('benYearlyBonus')+val('isaYearlyBonus')) + val('benQuarterlyBonus')*4;
+    const annualDeductions0 = state.deductions.reduce((s,d)=> s+(parseFloat(d.amount)||0)*12,0);
+    const t = computeYearlyTaxes(1, annualGross0, annualDeductions0);
+    document.getElementById('fedEstimate').textContent = '≈ ' + fmt(t.fedMonthly) + '/mo';
+    document.getElementById('nyEstimate').textContent = '≈ ' + fmt(t.nyMonthly) + '/mo';
+    document.getElementById('nycEstimate').textContent = '≈ ' + fmt(t.nycMonthly) + '/mo';
+  }
+  function wireTaxModeToggle(modeId, wrapId){
+    const modeEl = document.getElementById(modeId);
+    const wrapEl = document.getElementById(wrapId);
+    function sync(){ wrapEl.style.display = modeEl.value==='custom' ? '' : 'none'; }
+    modeEl.addEventListener('change', sync);
+    modeEl.addEventListener('input', sync);
+    sync();
+  }
+  wireTaxModeToggle('fedTaxMode','fedTaxCustomWrap');
+  wireTaxModeToggle('nyTaxMode','nyTaxCustomWrap');
+  wireTaxModeToggle('nycTaxMode','nycTaxCustomWrap');
 
   let uidCounter = 1;
   function nextId(){ return 'x' + (uidCounter++) + '_' + Math.random().toString(36).slice(2,7); }
@@ -347,12 +593,12 @@
       investMode: "percent",
       viewMode: "year",
       assets: [
-        {id:'a1', name:'Ben Brokerage', balance:40000, autoInvest:true},
-        {id:'a2', name:'Isabelle Brokerage', balance:30000, autoInvest:true},
-        {id:'a3', name:'Ben 401k', balance:60000, autoInvest:false},
-        {id:'a4', name:'Isabelle 401k', balance:50000, autoInvest:false},
-        {id:'a5', name:'Ben Roth', balance:20000, autoInvest:false},
-        {id:'a6', name:'Isabelle Roth', balance:15000, autoInvest:false}
+        {id:'a1', name:'Ben Brokerage', balance:40000, autoInvest:true, liquidityMode:'liquid', costBasis:0},
+        {id:'a2', name:'Isabelle Brokerage', balance:30000, autoInvest:true, liquidityMode:'liquid', costBasis:0},
+        {id:'a3', name:'Ben 401k', balance:60000, autoInvest:false, liquidityMode:'restricted', costBasis:0},
+        {id:'a4', name:'Isabelle 401k', balance:50000, autoInvest:false, liquidityMode:'restricted', costBasis:0},
+        {id:'a5', name:'Ben Roth', balance:20000, autoInvest:false, liquidityMode:'basis', costBasis:0},
+        {id:'a6', name:'Isabelle Roth', balance:15000, autoInvest:false, liquidityMode:'basis', costBasis:0}
       ],
       expenses: [
         {id:'e1', name:'Dining', amount:700},
@@ -365,12 +611,13 @@
         {id:'d1', person:'ben', name:'401k contribution', amount:1000, kind:'invest', targetAssetId:'a3'},
         {id:'d2', person:'isa', name:'401k contribution', amount:800, kind:'invest', targetAssetId:'a4'},
         {id:'d3', person:'joint', name:'Medical insurance', amount:400, kind:'expense', targetAssetId:''}
-      ]
+      ],
+      lifeEvents: []
     };
   }
 
   let state = defaultState();
-  let netWorthChart, cashFlowChart;
+  let netWorthChart, cashFlowChart, liquidChart;
   let saveTimer;
 
   function val(id){ const el = document.getElementById(id); return parseFloat(el.value) || 0; }
@@ -421,12 +668,19 @@
     recalc();
   });
 
+  // ---- roth/brokerage split slider ----
+  const rothSplitSlider = document.getElementById('rothSplitPct');
+  rothSplitSlider.addEventListener('input', ()=>{
+    document.getElementById('rothSplitVal').textContent = rothSplitSlider.value;
+    recalc();
+  });
+
   // ---- scalar inputs ----
   scalarIds.forEach(id=>{
-    document.getElementById(id).addEventListener('input', ()=>{
-      if(id==='yearsSlider') return;
-      recalc();
-    });
+    const el = document.getElementById(id);
+    const handler = ()=>{ if(id==='yearsSlider' || id==='rothSplitPct') return; recalc(); };
+    el.addEventListener('input', handler);
+    el.addEventListener('change', handler);
   });
 
   // =========================================================
@@ -435,17 +689,38 @@
   function renderAssets(){
     const wrap = document.getElementById('assetsList');
     wrap.innerHTML = state.assets.map(a=>`
-      <div class="dyn-row with-check" data-id="${a.id}">
-        <input type="text" data-field="name" value="${esc(a.name)}" placeholder="Account name">
-        <div class="input-wrap"><span class="prefix">$</span><input type="number" data-field="balance" value="${a.balance}" min="0"></div>
-        <label class="dyn-check"><input type="checkbox" data-field="autoInvest" ${a.autoInvest?'checked':''}>Auto-invest</label>
-        <button type="button" class="dyn-remove" data-action="remove">×</button>
+      <div class="asset-row ${a.liquidityMode==='basis'?'show-basis':''}" data-id="${a.id}">
+        <div class="asset-top">
+          <input type="text" data-field="name" value="${esc(a.name)}" placeholder="Account name">
+          <label class="dyn-check"><input type="checkbox" data-field="autoInvest" ${a.autoInvest?'checked':''}>Auto-invest</label>
+          <button type="button" class="dyn-remove" data-action="remove">×</button>
+        </div>
+        <div class="asset-mid">
+          <div class="field">
+            <span class="mini-label">Balance</span>
+            <div class="input-wrap"><span class="prefix">$</span><input type="number" data-field="balance" value="${a.balance}" min="0"></div>
+          </div>
+          <div class="field">
+            <span class="mini-label">Liquidity</span>
+            <select data-field="liquidityMode">
+              <option value="liquid" ${a.liquidityMode==='liquid'?'selected':''}>Fully accessible</option>
+              <option value="basis" ${a.liquidityMode==='basis'?'selected':''}>Contributions only (Roth-style)</option>
+              <option value="restricted" ${a.liquidityMode==='restricted'?'selected':''}>Restricted (401k, HSA, etc.)</option>
+            </select>
+          </div>
+        </div>
+        <div class="asset-basis">
+          <div class="field">
+            <span class="mini-label">Current contributions (cost basis)</span>
+            <div class="input-wrap"><span class="prefix">$</span><input type="number" data-field="costBasis" value="${a.costBasis||0}" min="0"></div>
+          </div>
+        </div>
       </div>
     `).join('');
   }
 
   document.getElementById('assetsList').addEventListener('input', e=>{
-    const row = e.target.closest('.dyn-row'); if(!row) return;
+    const row = e.target.closest('.asset-row'); if(!row) return;
     const item = state.assets.find(a=>a.id===row.dataset.id); if(!item) return;
     const field = e.target.dataset.field;
     if(field==='name'){
@@ -456,13 +731,18 @@
       });
       return; // renaming alone doesn't change numbers
     }
-    if(field==='balance') item.balance = parseFloat(e.target.value) || 0;
-    if(field==='autoInvest') item.autoInvest = e.target.checked;
-    recalc();
+    if(field==='balance'){ item.balance = parseFloat(e.target.value) || 0; recalc(); return; }
+    if(field==='autoInvest'){ item.autoInvest = e.target.checked; recalc(); return; }
+    if(field==='costBasis'){ item.costBasis = parseFloat(e.target.value) || 0; recalc(); return; }
+    if(field==='liquidityMode'){
+      item.liquidityMode = e.target.value;
+      row.classList.toggle('show-basis', item.liquidityMode==='basis');
+      recalc();
+    }
   });
   document.getElementById('assetsList').addEventListener('click', e=>{
     if(e.target.dataset.action !== 'remove') return;
-    const row = e.target.closest('.dyn-row');
+    const row = e.target.closest('.asset-row');
     const id = row.dataset.id;
     state.assets = state.assets.filter(a=>a.id!==id);
     state.deductions.forEach(d=>{ if(d.targetAssetId===id) d.targetAssetId=''; });
@@ -471,7 +751,7 @@
     recalc();
   });
   document.querySelector('[data-add="asset"]').addEventListener('click', ()=>{
-    state.assets.push({id:nextId(), name:'', balance:0, autoInvest:false});
+    state.assets.push({id:nextId(), name:'', balance:0, autoInvest:false, liquidityMode:'liquid', costBasis:0});
     renderAssets();
     renderDeductions();
     recalc();
@@ -584,11 +864,99 @@
   });
 
   // =========================================================
+  // LIFE EVENTS
+  // =========================================================
+  function renderLifeEvents(){
+    const wrap = document.getElementById('lifeEventsList');
+    wrap.innerHTML = state.lifeEvents.map(ev=>{
+      const rowClasses = ['evt-row'];
+      if(ev.durationMode==='oneTime') rowClasses.push('onetime');
+      if(ev.durationMode==='years') rowClasses.push('show-duration-n');
+      return `
+      <div class="${rowClasses.join(' ')}" data-id="${ev.id}">
+        <div class="evt-top">
+          <input type="text" data-field="name" value="${esc(ev.name)}" placeholder="e.g. Have a kid, quit for art school, promotion">
+          <label class="evt-enable"><input type="checkbox" data-field="enabled" ${ev.enabled?'checked':''}>Include</label>
+          <button type="button" class="dyn-remove" data-action="remove">×</button>
+        </div>
+        <div class="evt-mid">
+          <div class="field">
+            <span class="mini-label">Starting year</span>
+            <input type="number" data-field="startYear" value="${ev.startYear}" min="1" max="30">
+          </div>
+          <div class="field">
+            <span class="mini-label">Duration</span>
+            <select data-field="durationMode">
+              <option value="oneTime" ${ev.durationMode==='oneTime'?'selected':''}>One-time only</option>
+              <option value="years" ${ev.durationMode==='years'?'selected':''}>For N years</option>
+              <option value="permanent" ${ev.durationMode==='permanent'?'selected':''}>Rest of projection</option>
+            </select>
+          </div>
+        </div>
+        <div class="evt-duration-n">
+          <div class="field">
+            <span class="mini-label">Number of years</span>
+            <input type="number" data-field="durationYears" value="${ev.durationYears||1}" min="1" max="30">
+          </div>
+        </div>
+        <div class="evt-recurring">
+          <div class="field">
+            <span class="mini-label">Income change ($/mo)</span>
+            <div class="input-wrap"><span class="prefix">$</span><input type="number" data-field="incomeDelta" value="${ev.incomeDelta}"></div>
+          </div>
+          <div class="field">
+            <span class="mini-label">Expense change ($/mo)</span>
+            <div class="input-wrap"><span class="prefix">$</span><input type="number" data-field="expenseDelta" value="${ev.expenseDelta}"></div>
+          </div>
+        </div>
+        <div class="field">
+          <span class="mini-label">One-time amount (+windfall / −cost)</span>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" data-field="lumpSum" value="${ev.lumpSum}"></div>
+        </div>
+        <div class="evt-impact neutral" id="impact-${ev.id}">Impact not yet calculated</div>
+      </div>
+    `;
+    }).join('');
+  }
+
+  document.getElementById('lifeEventsList').addEventListener('input', e=>{
+    const row = e.target.closest('.evt-row'); if(!row) return;
+    const item = state.lifeEvents.find(x=>x.id===row.dataset.id); if(!item) return;
+    const field = e.target.dataset.field;
+    if(field==='name'){ item.name = e.target.value; return; }
+    if(field==='enabled'){ item.enabled = e.target.checked; recalc(); return; }
+    if(field==='startYear'){ item.startYear = parseInt(e.target.value,10)||1; recalc(); return; }
+    if(field==='durationYears'){ item.durationYears = parseInt(e.target.value,10)||1; recalc(); return; }
+    if(field==='incomeDelta'){ item.incomeDelta = parseFloat(e.target.value)||0; recalc(); return; }
+    if(field==='expenseDelta'){ item.expenseDelta = parseFloat(e.target.value)||0; recalc(); return; }
+    if(field==='lumpSum'){ item.lumpSum = parseFloat(e.target.value)||0; recalc(); return; }
+    if(field==='durationMode'){
+      item.durationMode = e.target.value;
+      row.classList.toggle('onetime', item.durationMode==='oneTime');
+      row.classList.toggle('show-duration-n', item.durationMode==='years');
+      recalc();
+    }
+  });
+  document.getElementById('lifeEventsList').addEventListener('click', e=>{
+    if(e.target.dataset.action !== 'remove') return;
+    const id = e.target.closest('.evt-row').dataset.id;
+    state.lifeEvents = state.lifeEvents.filter(x=>x.id!==id);
+    renderLifeEvents();
+    recalc();
+  });
+  document.querySelector('[data-add="lifeEvent"]').addEventListener('click', ()=>{
+    state.lifeEvents.push({id:nextId(), name:'', enabled:true, startYear:1, durationMode:'permanent', durationYears:1, incomeDelta:0, expenseDelta:0, lumpSum:0});
+    renderLifeEvents();
+    recalc();
+  });
+
+  // =========================================================
   // PROJECTION ENGINE
   // =========================================================
-  function project(){
+  function project(eventsOverride){
     const years = parseInt(yearsSlider.value,10);
     const months = years*12;
+    const eventsToUse = eventsOverride !== undefined ? eventsOverride : state.lifeEvents.filter(e=>e.enabled);
 
     const benBase = val('benIncome'), benYB = val('benYearlyBonus'), benQB = val('benQuarterlyBonus');
     const isaBase = val('isaIncome'), isaYB = val('isaYearlyBonus');
@@ -598,17 +966,29 @@
     const assetMonthlyRate = Math.pow(1+assetG, 1/12) - 1;
     const investPct = val('investPct')/100;
     const investFixed = val('investFixed');
+    const rothSplit = val('rothSplitPct')/100;
     const expenseBase = state.expenses.reduce((s,x)=>s+(parseFloat(x.amount)||0),0);
 
     let assetBalances = {};
-    state.assets.forEach(a=> assetBalances[a.id] = a.balance);
+    let liquidBalances = {};
+    const assetLiquidityMode = {};
+    state.assets.forEach(a=>{
+      assetBalances[a.id] = a.balance;
+      assetLiquidityMode[a.id] = a.liquidityMode || 'liquid';
+      liquidBalances[a.id] = a.liquidityMode==='liquid' ? a.balance : a.liquidityMode==='basis' ? Math.min(a.costBasis||0, a.balance) : 0;
+    });
     const autoInvestIds = state.assets.filter(a=>a.autoInvest).map(a=>a.id);
+    // split auto-invest accounts into "brokerage" (fully liquid) vs "Roth-style" (contributions-only or restricted)
+    const brokerageIds = autoInvestIds.filter(id => assetLiquidityMode[id]==='liquid');
+    const rothIds = autoInvestIds.filter(id => assetLiquidityMode[id]!=='liquid');
     let cash = 0;
 
-    const rows = [];
+    // ---- pass 1: monthly gross income, deductions, expenses & event effects (needed before tax can be computed per year) ----
+    const monthly = [];
     for(let m=1; m<=months; m++){
       const yearIdx = Math.floor((m-1)/12);
       const monthInYear = ((m-1) % 12) + 1;
+      const currentYear = yearIdx + 1;
       const compFactor = Math.pow(1+compG, yearIdx);
       const rentFactor = Math.pow(1+rentG, yearIdx);
       const expFactor = Math.pow(1+expG, yearIdx);
@@ -619,9 +999,23 @@
       if(monthInYear === 12) bonus += (benYB+isaYB)*compFactor;
       if(monthInYear % 3 === 0) bonus += benQB*compFactor;
 
-      const grossIncome = benInc+isaInc+bonus;
+      let eventIncomeAdj = 0, eventExpenseAdj = 0, eventLumpSum = 0;
+      eventsToUse.forEach(ev=>{
+        const start = parseInt(ev.startYear,10)||1;
+        const dur = parseInt(ev.durationYears,10)||1;
+        const recurringActive = ev.durationMode !== 'oneTime' && currentYear >= start &&
+          (ev.durationMode==='permanent' || currentYear < start + dur);
+        if(recurringActive){
+          eventIncomeAdj += (parseFloat(ev.incomeDelta)||0);
+          eventExpenseAdj += (parseFloat(ev.expenseDelta)||0);
+        }
+        if(currentYear === start && monthInYear === 1){
+          eventLumpSum += (parseFloat(ev.lumpSum)||0);
+        }
+      });
 
-      // paycheck deductions (grow with comp)
+      const grossIncome = benInc + isaInc + bonus + eventIncomeAdj;
+
       let deductionTotal = 0;
       const investDeductions = {};
       state.deductions.forEach(d=>{
@@ -632,55 +1026,128 @@
         }
       });
 
-      const incomeAfterDeductions = grossIncome - deductionTotal;
       const rentM = rentBase*rentFactor;
-      const expM = expenseBase*expFactor;
-      const netCF = incomeAfterDeductions - rentM - expM;
+      const expM = expenseBase*expFactor + eventExpenseAdj;
+
+      monthly.push({ yearIdx, currentYear, grossIncome, deductionTotal, investDeductions, rentM, expM, eventLumpSum });
+    }
+
+    // ---- annual totals for tax brackets ----
+    const annualGrossArr = new Array(years).fill(0);
+    const annualDedArr = new Array(years).fill(0);
+    monthly.forEach(r=>{ annualGrossArr[r.yearIdx] += r.grossIncome; annualDedArr[r.yearIdx] += r.deductionTotal; });
+
+    const yearlyTax = [];
+    for(let y=0; y<years; y++){
+      const cf = Math.pow(1+compG, y);
+      yearlyTax.push(computeYearlyTaxes(cf, annualGrossArr[y], annualDedArr[y]));
+    }
+
+    // ---- pass 2: cash flow, investing, assets, net worth ----
+    const rows = [];
+    monthly.forEach(r=>{
+      const yt = yearlyTax[r.yearIdx];
+      const taxTotal = yt.fedMonthly + yt.nyMonthly + yt.nycMonthly;
+      const incomeAfterDeductions = r.grossIncome - r.deductionTotal - taxTotal;
+      const netCF = incomeAfterDeductions - r.rentM - r.expM;
 
       let invested = 0;
       if(netCF > 0){
         invested = state.investMode==='percent' ? netCF*investPct : Math.min(investFixed, netCF);
       }
-      const cashDelta = netCF - invested;
-      cash += cashDelta;
 
-      // grow assets
-      Object.keys(assetBalances).forEach(id=> assetBalances[id] *= (1+assetMonthlyRate));
-      // leftover auto-invest, split evenly across checked accounts
-      if(invested > 0 && autoInvestIds.length){
-        const share = invested / autoInvestIds.length;
-        autoInvestIds.forEach(id=> assetBalances[id] += share);
+      // split the invested amount between brokerage and Roth-style groups per the slider,
+      // falling back to whichever group actually has accounts so money never vanishes
+      let targetRoth = invested * rothSplit;
+      let targetBrokerage = invested - targetRoth;
+      let actualRoth = rothIds.length ? targetRoth : 0;
+      let actualBrokerage = brokerageIds.length ? targetBrokerage : 0;
+      const unallocated = invested - actualRoth - actualBrokerage;
+      if(unallocated > 0){
+        if(rothIds.length) actualRoth += unallocated;
+        else if(brokerageIds.length) actualBrokerage += unallocated;
       }
-      // paycheck-deduction contributions land directly in their target accounts
-      Object.keys(investDeductions).forEach(id=> assetBalances[id] += investDeductions[id]);
+      const actuallyInvested = actualRoth + actualBrokerage;
+
+      let cashDelta = netCF - actuallyInvested;
+      cash += cashDelta;
+      cash += r.eventLumpSum; // one-time amounts go straight to cash, bypassing the invest split
+
+      Object.keys(assetBalances).forEach(id=> assetBalances[id] *= (1+assetMonthlyRate));
+
+      const contributionThisMonth = {};
+      if(actualBrokerage > 0 && brokerageIds.length){
+        const share = actualBrokerage / brokerageIds.length;
+        brokerageIds.forEach(id=>{
+          assetBalances[id] += share;
+          contributionThisMonth[id] = (contributionThisMonth[id]||0) + share;
+        });
+      }
+      if(actualRoth > 0 && rothIds.length){
+        const share = actualRoth / rothIds.length;
+        rothIds.forEach(id=>{
+          assetBalances[id] += share;
+          contributionThisMonth[id] = (contributionThisMonth[id]||0) + share;
+        });
+      }
+      Object.keys(r.investDeductions).forEach(id=>{
+        assetBalances[id] += r.investDeductions[id];
+        contributionThisMonth[id] = (contributionThisMonth[id]||0) + r.investDeductions[id];
+      });
+
+      // liquid balances: 'liquid' mirrors the full (grown) balance, 'basis' only grows via new contributions
+      // (not market growth), 'restricted' never counts as accessible.
+      Object.keys(assetBalances).forEach(id=>{
+        const mode = assetLiquidityMode[id];
+        if(mode==='liquid') liquidBalances[id] = assetBalances[id];
+        else if(mode==='basis') liquidBalances[id] = (liquidBalances[id]||0) + (contributionThisMonth[id]||0);
+      });
 
       const netWorth = Object.values(assetBalances).reduce((a,b)=>a+b,0) + cash;
+      const liquidNetWorth = Object.values(liquidBalances).reduce((a,b)=>a+b,0) + cash;
 
       rows.push({
-        m, year: yearIdx+1, grossIncome, deductionTotal, rentM, expM, netCF, invested, cash, netWorth
+        m: rows.length+1, year: r.currentYear, grossIncome: r.grossIncome, deductionTotal: r.deductionTotal,
+        taxTotal, rentM: r.rentM, expM: r.expM, netCF, invested: actuallyInvested, cash, netWorth, liquidNetWorth, eventLumpSum: r.eventLumpSum,
+        assetBalances: Object.assign({}, assetBalances), liquidBalances: Object.assign({}, liquidBalances)
       });
-    }
+    });
     return rows;
   }
 
   function aggregateYearly(rows){
     const years = {};
     rows.forEach(r=>{
-      if(!years[r.year]) years[r.year] = {year:r.year, income:0, deductions:0, outflow:0, net:0, netWorth:0};
+      if(!years[r.year]) years[r.year] = {year:r.year, income:0, deductions:0, taxes:0, outflow:0, net:0, netWorth:0, liquidNetWorth:0, assetBalances:{}, liquidBalances:{}, cash:0};
       years[r.year].income += r.grossIncome;
       years[r.year].deductions += r.deductionTotal;
+      years[r.year].taxes += r.taxTotal;
       years[r.year].outflow += (r.rentM + r.expM);
       years[r.year].net += r.netCF;
       years[r.year].netWorth = r.netWorth;
+      years[r.year].liquidNetWorth = r.liquidNetWorth;
+      years[r.year].assetBalances = r.assetBalances;
+      years[r.year].liquidBalances = r.liquidBalances;
+      years[r.year].cash = r.cash;
     });
     return Object.values(years);
   }
 
   function recalc(){
+    updateTaxEstimates();
     const rows = project();
     if(rows.length === 0) return;
     const yearly = aggregateYearly(rows);
     const last = rows[rows.length-1];
+
+    const enabledEvents = state.lifeEvents.filter(e=>e.enabled);
+    const hasEvents = enabledEvents.length > 0;
+    let baselineRows = null, baselineYearly = null, baselineLast = null;
+    if(hasEvents){
+      baselineRows = project([]);
+      baselineYearly = aggregateYearly(baselineRows);
+      baselineLast = baselineRows[baselineRows.length-1];
+    }
 
     document.getElementById('sumNetWorth').textContent = fmt(last.netWorth);
     const y1 = yearly[0];
@@ -689,29 +1156,95 @@
     cfEl.textContent = fmt(avgY1);
     cfEl.className = 'value ' + (avgY1 >= 0 ? 'pos' : 'neg');
 
+    // ---- individual accounts: today snapshot ----
+    const liquidityLabels = { liquid:'Fully accessible', basis:'Contributions only', restricted:'Restricted' };
+    const accTbody = document.querySelector('#accountsTodayTable tbody');
+    accTbody.innerHTML = '';
+    let accessibleTodayTotal = 0;
+    state.assets.forEach(a=>{
+      const mode = a.liquidityMode || 'liquid';
+      const accessible = mode==='liquid' ? a.balance : mode==='basis' ? Math.min(a.costBasis||0, a.balance) : 0;
+      accessibleTodayTotal += accessible;
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td>'+esc(a.name||'(unnamed account)')+'</td><td class="num">'+fmt(a.balance)+'</td>'
+        +'<td><span class="liquidity-tag '+mode+'">'+liquidityLabels[mode]+'</span></td>'
+        +'<td class="num">'+fmt(accessible)+'</td>';
+      accTbody.appendChild(tr);
+    });
+    document.getElementById('accessibleTodaySummary').textContent =
+      'Accessible without penalty today: ' + fmt(accessibleTodayTotal) + ' across ' + state.assets.length + ' account' + (state.assets.length===1?'':'s') + ' (excludes any current cash reserve outside these accounts).';
+
+    // ---- preview which auto-invest accounts fall into each split bucket ----
+    const brokerageNames = state.assets.filter(a=>a.autoInvest && (a.liquidityMode||'liquid')==='liquid').map(a=>a.name||'(unnamed)');
+    const rothNames = state.assets.filter(a=>a.autoInvest && (a.liquidityMode||'liquid')!=='liquid').map(a=>a.name||'(unnamed)');
+    const previewEl = document.getElementById('splitPreview');
+    if(!brokerageNames.length && !rothNames.length){
+      previewEl.textContent = 'No accounts are currently checked "Auto-invest" — leftover cash will just build up as a cash reserve.';
+    } else {
+      previewEl.innerHTML = '<b>Brokerage bucket:</b> ' + (brokerageNames.length ? esc(brokerageNames.join(', ')) : '<em>none checked</em>')
+        + ' &nbsp; <b>Roth-style bucket:</b> ' + (rothNames.length ? esc(rothNames.join(', ')) : '<em>none checked</em>');
+    }
+
+    // ---- life events: overall summary + per-event isolated impact ----
+    const summaryEl = document.getElementById('lifeSummary');
+    if(hasEvents){
+      const delta = last.netWorth - baselineLast.netWorth;
+      const years = parseInt(yearsSlider.value,10);
+      summaryEl.style.display = '';
+      summaryEl.innerHTML = 'With your life events included, net worth in <b>'+years+' years</b> is <b>'+fmt(last.netWorth)+'</b> — vs. <b>'+fmt(baselineLast.netWorth)+'</b> without them. Combined impact: <b style="color:'+(delta>=0?'var(--ben)':'var(--neg)')+'">'+(delta>=0?'+':'')+fmt(delta)+'</b>.';
+    } else {
+      summaryEl.style.display = 'none';
+    }
+    state.lifeEvents.forEach(ev=>{
+      const badge = document.getElementById('impact-'+ev.id);
+      if(!badge) return;
+      if(!ev.enabled){
+        badge.textContent = 'Not included in projection';
+        badge.className = 'evt-impact neutral';
+        return;
+      }
+      const isolatedRows = project([ev]);
+      const isolatedLast = isolatedRows[isolatedRows.length-1];
+      const soloDelta = isolatedLast.netWorth - baselineLast.netWorth;
+      badge.textContent = 'Solo impact by Yr '+parseInt(yearsSlider.value,10)+': '+(soloDelta>=0?'+':'')+fmt(soloDelta);
+      badge.className = 'evt-impact ' + (soloDelta > 0 ? 'pos' : soloDelta < 0 ? 'neg' : 'neutral');
+    });
+
     const useMonthly = state.viewMode === 'month';
-    let labels, netWorthSeries, cashFlowSeries;
+    let labels, netWorthSeries, cashFlowSeries, baselineNetWorthSeries;
     if(useMonthly){
       labels = rows.map(r=> 'M'+r.m);
       netWorthSeries = rows.map(r=>r.netWorth);
       cashFlowSeries = rows.map(r=>r.netCF);
+      if(hasEvents) baselineNetWorthSeries = baselineRows.map(r=>r.netWorth);
     } else {
       labels = yearly.map(y=>'Yr '+y.year);
       netWorthSeries = yearly.map(y=>y.netWorth);
       cashFlowSeries = yearly.map(y=>y.net);
+      if(hasEvents) baselineNetWorthSeries = baselineYearly.map(y=>y.netWorth);
+    }
+
+    const nwDatasets = [{
+      label: hasEvents ? 'With life events' : 'Net worth',
+      data: netWorthSeries, borderColor:'#2F6F4F', backgroundColor:'rgba(47,111,79,0.12)',
+      fill:true, tension:0.25, pointRadius:0, borderWidth:2
+    }];
+    if(hasEvents){
+      nwDatasets.push({
+        label:'Baseline (no life events)',
+        data: baselineNetWorthSeries, borderColor:'#8A8578', backgroundColor:'transparent',
+        borderDash:[5,4], fill:false, tension:0.25, pointRadius:0, borderWidth:2
+      });
     }
 
     const nwCtx = document.getElementById('netWorthChart');
     if(netWorthChart) netWorthChart.destroy();
     netWorthChart = new Chart(nwCtx, {
       type:'line',
-      data:{ labels, datasets:[{
-        data: netWorthSeries, borderColor:'#2F6F4F', backgroundColor:'rgba(47,111,79,0.12)',
-        fill:true, tension:0.25, pointRadius:0, borderWidth:2
-      }]},
+      data:{ labels, datasets: nwDatasets },
       options:{
         responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: c=> fmt(c.raw) } } },
+        plugins:{ legend:{display: hasEvents, position:'top', labels:{boxWidth:12, font:{size:10}, color:'#6B7268'}}, tooltip:{ callbacks:{ label: c=> (c.dataset.label?c.dataset.label+': ':'') + fmt(c.raw) } } },
         scales:{ x:{ ticks:{ maxTicksLimit: useMonthly?8:12, color:'#6B7268', font:{size:10} }, grid:{display:false} },
                  y:{ ticks:{ callback:v=>fmt(v), color:'#6B7268', font:{size:10} }, grid:{color:'#EEEBDF'} } }
       }
@@ -735,10 +1268,43 @@
 
     const tbody = document.querySelector('#summaryTable tbody');
     tbody.innerHTML = '';
-    yearly.forEach(y=>{
+    yearly.forEach((y,i)=>{
+      const evDelta = hasEvents ? (y.netWorth - baselineYearly[i].netWorth) : 0;
+      const evCell = hasEvents ? (evDelta>=0?'+':'') + fmt(evDelta) : '—';
       const tr = document.createElement('tr');
-      tr.innerHTML = '<td>Yr '+y.year+'</td><td class="num">'+fmt(y.income)+'</td><td class="num">'+fmt(y.deductions)+'</td><td class="num">'+fmt(y.outflow)+'</td><td class="num">'+fmt(y.net)+'</td><td class="num">'+fmt(y.netWorth)+'</td>';
+      tr.innerHTML = '<td>Yr '+y.year+'</td><td class="num">'+fmt(y.income)+'</td><td class="num">'+fmt(y.deductions)+'</td><td class="num">'+fmt(y.taxes)+'</td><td class="num">'+fmt(y.outflow)+'</td><td class="num">'+fmt(y.net)+'</td><td class="num">'+fmt(y.netWorth)+'</td><td class="num">'+evCell+'</td>';
       tbody.appendChild(tr);
+    });
+
+    // ---- accessible (liquid) net worth chart — always plotted yearly for readability ----
+    const liquidLabels = yearly.map(y=>'Yr '+y.year);
+    const liquidSeries = yearly.map(y=>y.liquidNetWorth);
+    const liqCtx = document.getElementById('liquidChart');
+    if(liquidChart) liquidChart.destroy();
+    liquidChart = new Chart(liqCtx, {
+      type:'line',
+      data:{ labels: liquidLabels, datasets:[{
+        data: liquidSeries, borderColor:'#B98A2E', backgroundColor:'rgba(185,138,46,0.12)',
+        fill:true, tension:0.25, pointRadius:0, borderWidth:2
+      }]},
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: c=> fmt(c.raw) } } },
+        scales:{ x:{ ticks:{ maxTicksLimit:12, color:'#6B7268', font:{size:10} }, grid:{display:false} },
+                 y:{ ticks:{ callback:v=>fmt(v), color:'#6B7268', font:{size:10} }, grid:{color:'#EEEBDF'} } }
+      }
+    });
+
+    // ---- individual accounts by year ----
+    const headRow = document.getElementById('accountsByYearHead');
+    headRow.innerHTML = '<th>Year</th>' + state.assets.map(a=>'<th>'+esc(a.name||'(unnamed)')+'</th>').join('') + '<th>Cash</th><th>Total</th>';
+    const byYearBody = document.querySelector('#accountsByYearTable tbody');
+    byYearBody.innerHTML = '';
+    yearly.forEach(y=>{
+      const cells = state.assets.map(a=> '<td class="num">'+fmt(y.assetBalances[a.id]||0)+'</td>').join('');
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td>Yr '+y.year+'</td>'+cells+'<td class="num">'+fmt(y.cash)+'</td><td class="num">'+fmt(y.netWorth)+'</td>';
+      byYearBody.appendChild(tr);
     });
 
     scheduleSave();
@@ -748,7 +1314,7 @@
   // PERSISTENCE
   // =========================================================
   function collectState(){
-    const s = { investMode: state.investMode, viewMode: state.viewMode, assets: state.assets, expenses: state.expenses, deductions: state.deductions, scalars:{} };
+    const s = { investMode: state.investMode, viewMode: state.viewMode, assets: state.assets, expenses: state.expenses, deductions: state.deductions, lifeEvents: state.lifeEvents, scalars:{} };
     scalarIds.forEach(id=> s.scalars[id] = document.getElementById(id).value);
     return s;
   }
@@ -757,8 +1323,20 @@
       scalarIds.forEach(id=>{ if(saved.scalars[id] !== undefined) document.getElementById(id).value = saved.scalars[id]; });
     }
     if(Array.isArray(saved.assets)) state.assets = saved.assets;
+    // backfill liquidity fields for assets exported before this feature existed
+    state.assets.forEach(a=>{
+      if(a.liquidityMode === undefined){
+        const n = (a.name||'').toLowerCase();
+        if(n.includes('401k') || n.includes('403b') || n.includes('hsa') || n.includes('pension')) a.liquidityMode = 'restricted';
+        else if(n.includes('roth')) a.liquidityMode = 'basis';
+        else a.liquidityMode = 'liquid';
+      }
+      if(a.costBasis === undefined) a.costBasis = 0;
+    });
     if(Array.isArray(saved.expenses)) state.expenses = saved.expenses;
     if(Array.isArray(saved.deductions)) state.deductions = saved.deductions;
+    // lifeEvents is new — older exports simply won't have it, so state.lifeEvents stays the default []
+    if(Array.isArray(saved.lifeEvents)) state.lifeEvents = saved.lifeEvents;
     if(saved.investMode){
       state.investMode = saved.investMode;
       document.querySelectorAll('[data-invest-mode]').forEach(p=>{
@@ -775,6 +1353,7 @@
     }
     document.getElementById('yearsVal').textContent = document.getElementById('yearsSlider').value;
     document.getElementById('sumYearsLabel').textContent = document.getElementById('yearsSlider').value;
+    document.getElementById('rothSplitVal').textContent = document.getElementById('rothSplitPct').value;
   }
 
   const storageAvailable = (typeof window !== 'undefined') && window.storage
@@ -828,6 +1407,7 @@
     renderAssets();
     renderExpenses();
     renderDeductions();
+    renderLifeEvents();
     recalc();
   }
 
@@ -851,6 +1431,7 @@
         renderAssets();
         renderExpenses();
         renderDeductions();
+        renderLifeEvents();
         recalc();
       }catch(err){
         alert('Could not read that file — make sure it\'s a worksheet export.');
