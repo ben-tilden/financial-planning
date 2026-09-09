@@ -13,6 +13,7 @@
     --isa:#A6663A;
     --isa-soft:#F2E7DC;
     --gold:#B98A2E;
+    --gold-soft:#F4EBD6;
     --neg:#B5493B;
     --neg-soft:#F5E4E1;
     --muted:#6B7268;
@@ -28,6 +29,7 @@
     --isa:#E0A467;
     --isa-soft:#33291D;
     --gold:#E3B25C;
+    --gold-soft:#362B16;
     --neg:#E58274;
     --neg-soft:#3A2521;
     --muted:#9CA096;
@@ -35,7 +37,7 @@
   }
   *{box-sizing:border-box;}
   body{margin:0;padding:0;background:transparent;color:var(--ink);font-family:'Inter',system-ui,sans-serif;}
-  .wrap{max-width:720px;margin:0 auto;padding:20px 16px 60px;background:var(--paper);transition:background .2s ease,color .2s ease;}
+  .wrap{max-width:720px;margin:0 auto;padding:20px 16px 60px;background:var(--paper);color:var(--ink);transition:background .2s ease,color .2s ease;}
   .theme-toggle{
     display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--line);border-radius:20px;
     background:var(--panel);color:var(--ink);font-size:0.8rem;cursor:pointer;font-family:'Inter',sans-serif;float:right;
@@ -192,7 +194,7 @@
   .accounts-today thead th{color:var(--muted);font-weight:500;font-size:0.7rem;}
   .liquidity-tag{font-size:0.7rem;padding:2px 6px;border-radius:10px;white-space:nowrap;}
   .liquidity-tag.liquid{background:var(--ben-soft);color:var(--ben);}
-  .liquidity-tag.basis{background:#F4EBD6;color:var(--gold);}
+  .liquidity-tag.basis{background:var(--gold-soft);color:var(--gold);}
   .liquidity-tag.restricted{background:var(--neg-soft);color:var(--neg);}
 
   /* ---- results ---- */
@@ -654,6 +656,17 @@
   }
   function esc(s){
     return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  // reads the *current* value of a theme CSS variable straight off the wrap element, so chart
+  // colors always match whatever palette (light or dark) is active instead of being hardcoded
+  function themeColor(name){
+    return getComputedStyle(wrapEl).getPropertyValue(name).trim();
+  }
+  function hexToRgba(hex, alpha){
+    const h = hex.replace('#','');
+    const full = h.length === 3 ? h.split('').map(c=>c+c).join('') : h;
+    const r = parseInt(full.substring(0,2),16), g = parseInt(full.substring(2,4),16), b = parseInt(full.substring(4,6),16);
+    return 'rgba('+r+','+g+','+b+','+alpha+')';
   }
 
   // ---- theme (dark mode) ----
@@ -1305,9 +1318,13 @@
     const chartGrid = isDark ? '#333B33' : '#EEEBDF';
     const chartBaselineColor = isDark ? '#A7A297' : '#8A8578';
 
+    const benColor = themeColor('--ben');
+    const goldColor = themeColor('--gold');
+    const negColor = themeColor('--neg');
+
     const nwDatasets = [{
       label: hasEvents ? 'With life events' : 'Net worth',
-      data: netWorthSeries, borderColor:'#2F6F4F', backgroundColor:'rgba(47,111,79,0.12)',
+      data: netWorthSeries, borderColor: benColor, backgroundColor: hexToRgba(benColor, 0.12),
       fill:true, tension:0.25, pointRadius:0, pointHitRadius:14, pointHoverRadius:4, borderWidth:2
     }];
     if(hasEvents){
@@ -1339,7 +1356,7 @@
       type:'bar',
       data:{ labels, datasets:[{
         data: cashFlowSeries,
-        backgroundColor: cashFlowSeries.map(v=> v>=0 ? 'rgba(47,111,79,0.65)' : 'rgba(181,73,59,0.65)')
+        backgroundColor: cashFlowSeries.map(v=> v>=0 ? hexToRgba(benColor, 0.65) : hexToRgba(negColor, 0.65))
       }]},
       options:{
         responsive:true, maintainAspectRatio:false,
@@ -1368,7 +1385,7 @@
     liquidChart = new Chart(liqCtx, {
       type:'line',
       data:{ labels: liquidLabels, datasets:[{
-        data: liquidSeries, borderColor:'#B98A2E', backgroundColor:'rgba(185,138,46,0.12)',
+        data: liquidSeries, borderColor: goldColor, backgroundColor: hexToRgba(goldColor, 0.12),
         fill:true, tension:0.25, pointRadius:0, pointHitRadius:14, pointHoverRadius:4, borderWidth:2
       }]},
       options:{
