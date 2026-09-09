@@ -662,6 +662,11 @@
     wrapEl.classList.toggle('dark', theme === 'dark');
     document.getElementById('themeIcon').textContent = theme === 'dark' ? '☀️' : '🌙';
     document.getElementById('themeLabel').textContent = theme === 'dark' ? 'Light' : 'Dark';
+    // body/html default to transparent so the card blends into claude.ai's own background when embedded there;
+    // but opened as a standalone file, "transparent" just falls back to browser white, so set it explicitly.
+    const pageBg = theme === 'dark' ? '#161C18' : '';
+    document.body.style.background = pageBg;
+    document.documentElement.style.background = pageBg;
   }
   document.getElementById('themeToggle').addEventListener('click', ()=>{
     theme = theme === 'dark' ? 'light' : 'dark';
