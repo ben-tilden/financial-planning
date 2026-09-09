@@ -1,6 +1,6 @@
 # Household Finance Worksheet
 
-A self-contained HTML household finance planner. Open [`index.html`](index.html) in any browser — no build step or server required.
+A self-contained HTML household finance planner for **ballpark modeling** — not a comprehensive financial planning tool. Open [`index.html`](index.html) in any browser — no build step or server required. Outputs are intentionally approximate; assume imprecision when interpreting results.
 
 Live demo: [ben-tilden.github.io/financial-planning](https://ben-tilden.github.io/financial-planning/)
 
@@ -30,7 +30,7 @@ Your own exports should stay on your machine (or in a separate private repo). Fi
 
 Changes to the worksheet logic belong in `index.html`. If you add or rename fields in the export format, update `examples/household-starter.json` so importers stay compatible.
 
-Numbers are planning estimates, not financial or tax advice.
+Numbers are planning estimates, not financial or tax advice. This is a directional tool for ballpark modeling — many details (FICA, credits, vesting schedules, account rules, etc.) are simplified or skipped entirely.
 
 ## License
 
