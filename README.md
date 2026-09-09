@@ -31,3 +31,7 @@ Your own exports should stay on your machine (or in a separate private repo). Fi
 Changes to the worksheet logic belong in `index.html`. If you add or rename fields in the export format, update `examples/household-starter.json` so importers stay compatible.
 
 Numbers are planning estimates, not financial or tax advice.
+
+## License
+
+Licensed under the MIT License — see [LICENSE](LICENSE).
