@@ -1,10 +1,14 @@
 # Household Finance Worksheet
 
-A self-contained HTML household finance planner. Open `finance-worksheet-final.html` in any browser — no build step or server required.
+A self-contained HTML household finance planner. Open [`index.html`](index.html) in any browser — no build step or server required.
+
+Live demo: [ben-tilden.github.io/financial-planning](https://ben-tilden.github.io/financial-planning/)
 
 ## Features
 
-- Income, paycheck deductions, expenses, and asset tracking
+- Flexible income earners (solo or multi-person household)
+- Customizable variable pay schedules (monthly, quarterly, semi-annual, or annual)
+- Paycheck deductions, expenses, and asset tracking
 - Multi-year projections with charts
 - Estimated federal, NY State, and NYC taxes
 - Life events (one-time or ongoing income/expense changes)
@@ -14,7 +18,7 @@ A self-contained HTML household finance planner. Open `finance-worksheet-final.h
 
 ## Quick start
 
-1. Open `finance-worksheet-final.html` in your browser.
+1. Open `index.html` in your browser (or use the live demo link above).
 2. Enter your numbers, or click **Import** and load `examples/household-starter.json` to explore with sample data.
 3. Use **Export** to save your scenario locally.
 
@@ -24,6 +28,6 @@ Your own exports should stay on your machine (or in a separate private repo). Fi
 
 ## Contributing
 
-Changes to the worksheet logic belong in `finance-worksheet-final.html`. If you add or rename fields in the export format, update `examples/household-starter.json` so importers stay compatible.
+Changes to the worksheet logic belong in `index.html`. If you add or rename fields in the export format, update `examples/household-starter.json` so importers stay compatible.
 
 Numbers are planning estimates, not financial or tax advice.

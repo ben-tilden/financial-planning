@@ -79,6 +79,19 @@
   .dot{width:7px;height:7px;border-radius:50%;flex:none;}
   .dot.ben{background:var(--ben);}
   .dot.isa{background:var(--isa);}
+  .dot.extra{background:var(--gold);}
+
+  .earner-block{border:1px solid var(--line);border-radius:8px;background:var(--input-bg);padding:11px;margin-top:10px;}
+  .earner-block:first-child{margin-top:0;}
+  .earner-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .earner-head input[type=text]{flex:1;padding:7px 9px;font-size:0.88rem;}
+  .earner-head .earner-label{font-size:0.85rem;font-weight:600;color:var(--ink);white-space:nowrap;}
+
+  .bonus-row{border:1px solid var(--line);border-radius:8px;background:var(--input-bg);padding:11px;margin-top:10px;}
+  .bonus-top{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+  .bonus-top select,.bonus-top input[type=text]{flex:1;padding:7px 9px;font-size:0.88rem;}
+  .bonus-bottom{display:grid;gap:8px;grid-template-columns:1fr 1fr 1fr;}
+  .bonus-bottom.hide-month{grid-template-columns:1fr 1fr;}
   .field .input-wrap{position:relative;}
   .field .prefix{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.92rem;}
   input[type=number],input[type=text],select{
@@ -222,7 +235,7 @@
 
 <div class="wrap" id="wrapEl">
   <div class="header-row">
-    <h1>Ben &amp; Isabelle — Household Worksheet</h1>
+    <h1 id="pageTitle">Household Finance Worksheet</h1>
     <button type="button" class="theme-toggle" id="themeToggle"><span id="themeIcon">🌙</span> <span id="themeLabel">Dark</span></button>
   </div>
   <p class="subtitle">Fill in income, expenses, and assets once, then tune the growth assumptions to see how net worth and monthly cash flow play out over time. Everything saves automatically.</p>
@@ -245,32 +258,14 @@
       <span class="chev">▸</span>
     </div>
     <div class="section-body">
-      <div class="subhead">Ben</div>
-      <div class="field-row">
-        <div class="field">
-          <label><span class="dot ben"></span>Monthly income</label>
-          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="benIncome" value="7500" min="0"></div>
-        </div>
-        <div class="field">
-          <label><span class="dot ben"></span>Yearly bonus</label>
-          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="benYearlyBonus" value="10000" min="0"></div>
-        </div>
-        <div class="field">
-          <label><span class="dot ben"></span>Quarterly bonus</label>
-          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="benQuarterlyBonus" value="0" min="0"></div>
-        </div>
-      </div>
-      <div class="subhead">Isabelle</div>
-      <div class="field-row">
-        <div class="field">
-          <label><span class="dot isa"></span>Monthly income</label>
-          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="isaIncome" value="6500" min="0"></div>
-        </div>
-        <div class="field">
-          <label><span class="dot isa"></span>Yearly bonus</label>
-          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="isaYearlyBonus" value="8000" min="0"></div>
-        </div>
-      </div>
+      <p class="sub-note">Add one row per income earner in the household. Names are optional — they appear in the page title and paycheck-deduction dropdowns.</p>
+      <div class="dyn-list" id="earnersList"></div>
+      <button type="button" class="dyn-add" data-add="earner">+ Add earner</button>
+
+      <div class="subhead" style="margin-top:16px">Variable pay</div>
+      <p class="sub-note">Bonuses, commissions, RSU vests, etc. Add as many line items as you need and set when each pays out during the year.</p>
+      <div class="dyn-list" id="bonusesList"></div>
+      <button type="button" class="dyn-add" data-add="bonus">+ Add variable pay</button>
     </div>
   </div>
 
@@ -299,19 +294,19 @@
         <div class="field">
           <label>Filing status</label>
           <select id="filingStatus">
-            <option value="mfj" selected>Married filing jointly</option>
-            <option value="single">Single</option>
+            <option value="single" selected>Single</option>
+            <option value="mfj">Married filing jointly</option>
           </select>
         </div>
       </div>
       <div class="grid2" style="margin-top:10px;">
         <div class="field">
           <label>Federal standard deduction</label>
-          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="fedStdDeduction" value="29200" min="0"></div>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="fedStdDeduction" value="14600" min="0"></div>
         </div>
         <div class="field">
           <label>NY standard deduction</label>
-          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="nyStdDeduction" value="16050" min="0"></div>
+          <div class="input-wrap"><span class="prefix">$</span><input type="number" id="nyStdDeduction" value="8000" min="0"></div>
         </div>
       </div>
 
@@ -528,11 +523,9 @@
 
 <script>
 (function(){
-  const scalarIds = ["benIncome","benYearlyBonus","benQuarterlyBonus","isaIncome","isaYearlyBonus",
-    "rent","compGrowth","assetGrowth","rentGrowth","expenseGrowth","investPct","investFixed","rothSplitPct","yearsSlider",
+  const scalarIds = ["rent","compGrowth","assetGrowth","rentGrowth","expenseGrowth","investPct","investFixed","rothSplitPct","yearsSlider",
     "filingStatus","fedStdDeduction","nyStdDeduction",
     "fedTaxMode","fedTaxCustom","nyTaxMode","nyTaxCustom","nycTaxMode","nycTaxCustom"];
-
   // ---- simplified ~2024 tax brackets (annual, cumulative upper bounds) ----
   const FED_MFJ = [
     {upTo:23200, rate:0.10},{upTo:94300, rate:0.12},{upTo:201050, rate:0.22},
@@ -591,8 +584,40 @@
 
     return { fedMonthly: fedAnnual/12, nyMonthly: nyAnnual/12, nycMonthly: nycAnnual/12 };
   }
+  const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function annualBonusTotal(bonuses){
+    return bonuses.reduce((sum, b)=>{
+      const amt = parseFloat(b.amount) || 0;
+      switch(b.cadence){
+        case 'monthly': return sum + amt * 12;
+        case 'quarterly': return sum + amt * 4;
+        case 'semi-annual': return sum + amt * 2;
+        case 'annual': return sum + amt;
+        default: return sum;
+      }
+    }, 0);
+  }
+  function annualGrossFromIncome(){
+    const base = state.earners.reduce((sum, e)=> sum + 12*(parseFloat(e.monthlyIncome)||0), 0);
+    return base + annualBonusTotal(state.bonuses);
+  }
+  function bonusPaidThisMonth(bonus, monthInYear){
+    const amt = parseFloat(bonus.amount) || 0;
+    if(amt === 0) return 0;
+    const month = parseInt(bonus.month, 10) || 12;
+    switch(bonus.cadence){
+      case 'monthly': return amt;
+      case 'annual': return monthInYear === month ? amt : 0;
+      case 'quarterly': return (monthInYear - month + 12) % 3 === 0 ? amt : 0;
+      case 'semi-annual': {
+        const m2 = ((month + 6 - 1) % 12) + 1;
+        return (monthInYear === month || monthInYear === m2) ? amt : 0;
+      }
+      default: return 0;
+    }
+  }
   function updateTaxEstimates(){
-    const annualGross0 = 12*(val('benIncome')+val('isaIncome')) + (val('benYearlyBonus')+val('isaYearlyBonus')) + val('benQuarterlyBonus')*4;
+    const annualGross0 = annualGrossFromIncome();
     const annualDeductions0 = state.deductions.reduce((s,d)=> s+(parseFloat(d.amount)||0)*12,0);
     const t = computeYearlyTaxes(1, annualGross0, annualDeductions0);
     document.getElementById('fedEstimate').textContent = '≈ ' + fmt(t.fedMonthly) + '/mo';
@@ -618,13 +643,14 @@
     return {
       investMode: "percent",
       viewMode: "year",
+      earners: [
+        {id:'p1', name:'', monthlyIncome:7500}
+      ],
+      bonuses: [],
       assets: [
-        {id:'a1', name:'Ben Brokerage', balance:40000, autoInvest:true, liquidityMode:'liquid', costBasis:0},
-        {id:'a2', name:'Isabelle Brokerage', balance:30000, autoInvest:true, liquidityMode:'liquid', costBasis:0},
-        {id:'a3', name:'Ben 401k', balance:60000, autoInvest:false, liquidityMode:'restricted', costBasis:0},
-        {id:'a4', name:'Isabelle 401k', balance:50000, autoInvest:false, liquidityMode:'restricted', costBasis:0},
-        {id:'a5', name:'Ben Roth', balance:20000, autoInvest:false, liquidityMode:'basis', costBasis:0},
-        {id:'a6', name:'Isabelle Roth', balance:15000, autoInvest:false, liquidityMode:'basis', costBasis:0}
+        {id:'a1', name:'Brokerage', balance:40000, autoInvest:true, liquidityMode:'liquid', costBasis:0},
+        {id:'a2', name:'401(k)', balance:60000, autoInvest:false, liquidityMode:'restricted', costBasis:0},
+        {id:'a3', name:'Roth IRA', balance:20000, autoInvest:false, liquidityMode:'basis', costBasis:15000}
       ],
       expenses: [
         {id:'e1', name:'Dining', amount:700},
@@ -634,12 +660,35 @@
         {id:'e5', name:'Other', amount:1300}
       ],
       deductions: [
-        {id:'d1', person:'ben', name:'401k contribution', amount:1000, kind:'invest', targetAssetId:'a3'},
-        {id:'d2', person:'isa', name:'401k contribution', amount:800, kind:'invest', targetAssetId:'a4'},
-        {id:'d3', person:'joint', name:'Medical insurance', amount:400, kind:'expense', targetAssetId:''}
+        {id:'d1', person:'p1', name:'401k contribution', amount:1000, kind:'invest', targetAssetId:'a2'},
+        {id:'d2', person:'joint', name:'Medical insurance', amount:400, kind:'expense', targetAssetId:''}
       ],
       lifeEvents: []
     };
+  }
+
+  function earnerDotClass(index){
+    return index === 0 ? 'ben' : index === 1 ? 'isa' : 'extra';
+  }
+  function earnerLabel(e, index){
+    const name = (e.name || '').trim();
+    return name || ('Earner ' + (index + 1));
+  }
+  function earnerOptionsHTML(selectedId){
+    return state.earners.map((e, i)=>
+      `<option value="${e.id}" ${e.id===selectedId?'selected':''}>${esc(earnerLabel(e, i))}</option>`
+    ).join('');
+  }
+  function personOptionsHTML(selectedPerson){
+    return earnerOptionsHTML(selectedPerson) +
+      `<option value="joint" ${selectedPerson==='joint'?'selected':''}>Joint</option>`;
+  }
+  function updatePageTitle(){
+    const names = state.earners.map((e, i)=> (e.name || '').trim()).filter(Boolean);
+    const titleEl = document.getElementById('pageTitle');
+    if(names.length === 0) titleEl.textContent = 'Household Finance Worksheet';
+    else if(names.length === 1) titleEl.textContent = names[0] + ' — Household Worksheet';
+    else titleEl.textContent = names.join(' & ') + ' — Household Worksheet';
   }
 
   let state = defaultState();
@@ -742,6 +791,142 @@
     const handler = ()=>{ if(id==='yearsSlider' || id==='rothSplitPct') return; recalc(); };
     el.addEventListener('input', handler);
     el.addEventListener('change', handler);
+  });
+
+  // =========================================================
+  // EARNERS
+  // =========================================================
+  function renderEarners(){
+    const wrap = document.getElementById('earnersList');
+    wrap.innerHTML = state.earners.map((e, i)=>{
+      const dot = earnerDotClass(i);
+      const removeBtn = state.earners.length > 1
+        ? `<button type="button" class="dyn-remove" data-action="remove">×</button>`
+        : '';
+      return `
+      <div class="earner-block" data-id="${e.id}">
+        <div class="earner-head">
+          <span class="dot ${dot}"></span>
+          <input type="text" data-field="name" value="${esc(e.name)}" placeholder="Name (optional)">
+          ${removeBtn}
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Monthly base pay</label>
+            <div class="input-wrap"><span class="prefix">$</span><input type="number" data-field="monthlyIncome" value="${e.monthlyIncome}" min="0"></div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    updatePageTitle();
+  }
+
+  document.getElementById('earnersList').addEventListener('input', e=>{
+    const block = e.target.closest('.earner-block'); if(!block) return;
+    const item = state.earners.find(x=>x.id===block.dataset.id); if(!item) return;
+    const field = e.target.dataset.field;
+    if(field === 'name'){
+      item.name = e.target.value;
+      updatePageTitle();
+      renderDeductions();
+      return;
+    }
+    if(field === 'monthlyIncome'){
+      item.monthlyIncome = parseFloat(e.target.value) || 0;
+      recalc();
+    }
+  });
+  document.getElementById('earnersList').addEventListener('click', e=>{
+    if(e.target.dataset.action !== 'remove') return;
+    if(state.earners.length <= 1) return;
+    const id = e.target.closest('.earner-block').dataset.id;
+    state.earners = state.earners.filter(x=>x.id!==id);
+    state.bonuses = state.bonuses.filter(b=>b.earnerId !== id);
+    state.deductions.forEach(d=>{ if(d.person === id) d.person = 'joint'; });
+    renderEarners();
+    renderBonuses();
+    renderDeductions();
+    recalc();
+  });
+  document.querySelector('[data-add="earner"]').addEventListener('click', ()=>{
+    state.earners.push({id: nextId(), name:'', monthlyIncome:0});
+    renderEarners();
+    renderBonuses();
+    renderDeductions();
+    recalc();
+  });
+
+  // =========================================================
+  // VARIABLE PAY (BONUSES)
+  // =========================================================
+  function monthOptionsHTML(selected){
+    return MONTH_NAMES.map((name, i)=>{
+      const v = i + 1;
+      return `<option value="${v}" ${v===selected?'selected':''}>${name}</option>`;
+    }).join('');
+  }
+  function renderBonuses(){
+    const wrap = document.getElementById('bonusesList');
+    wrap.innerHTML = state.bonuses.map(b=>{
+      const hideMonth = b.cadence === 'monthly';
+      return `
+      <div class="bonus-row" data-id="${b.id}">
+        <div class="bonus-top">
+          <select data-field="earnerId">${earnerOptionsHTML(b.earnerId)}</select>
+          <input type="text" data-field="name" value="${esc(b.name)}" placeholder="e.g. Year-end bonus, RSU vest">
+          <button type="button" class="dyn-remove" data-action="remove">×</button>
+        </div>
+        <div class="bonus-bottom ${hideMonth?'hide-month':''}">
+          <div class="field">
+            <span class="mini-label">Amount</span>
+            <div class="input-wrap"><span class="prefix">$</span><input type="number" data-field="amount" value="${b.amount}" min="0"></div>
+          </div>
+          <div class="field">
+            <span class="mini-label">Schedule</span>
+            <select data-field="cadence">
+              <option value="monthly" ${b.cadence==='monthly'?'selected':''}>Every month</option>
+              <option value="quarterly" ${b.cadence==='quarterly'?'selected':''}>Quarterly</option>
+              <option value="semi-annual" ${b.cadence==='semi-annual'?'selected':''}>Twice a year</option>
+              <option value="annual" ${b.cadence==='annual'?'selected':''}>Once a year</option>
+            </select>
+          </div>
+          <div class="field bonus-month-field" style="${hideMonth?'display:none':''}">
+            <span class="mini-label">${b.cadence==='annual'?'Payout month':b.cadence==='semi-annual'?'First payout month':'First month of cycle'}</span>
+            <select data-field="month">${monthOptionsHTML(parseInt(b.month,10)||12)}</select>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('bonusesList').addEventListener('input', e=>{
+    const row = e.target.closest('.bonus-row'); if(!row) return;
+    const item = state.bonuses.find(x=>x.id===row.dataset.id); if(!item) return;
+    const field = e.target.dataset.field;
+    if(field === 'name'){ item.name = e.target.value; return; }
+    if(field === 'amount'){ item.amount = parseFloat(e.target.value) || 0; recalc(); return; }
+    if(field === 'earnerId'){ item.earnerId = e.target.value; return; }
+    if(field === 'cadence'){
+      item.cadence = e.target.value;
+      if(item.cadence === 'monthly') item.month = 1;
+      renderBonuses();
+      recalc();
+      return;
+    }
+    if(field === 'month'){ item.month = parseInt(e.target.value, 10) || 12; recalc(); }
+  });
+  document.getElementById('bonusesList').addEventListener('click', e=>{
+    if(e.target.dataset.action !== 'remove') return;
+    const id = e.target.closest('.bonus-row').dataset.id;
+    state.bonuses = state.bonuses.filter(x=>x.id!==id);
+    renderBonuses();
+    recalc();
+  });
+  document.querySelector('[data-add="bonus"]').addEventListener('click', ()=>{
+    const earnerId = state.earners[0]?.id || 'p1';
+    state.bonuses.push({id: nextId(), earnerId, name:'', amount:0, cadence:'annual', month:12});
+    renderBonuses();
+    recalc();
   });
 
   // =========================================================
@@ -870,11 +1055,7 @@
     wrap.innerHTML = state.deductions.map(d=>`
       <div class="ded-row ${d.kind==='invest' ? 'show-target' : ''}" data-id="${d.id}">
         <div class="ded-top">
-          <select data-field="person">
-            <option value="ben" ${d.person==='ben'?'selected':''}>Ben</option>
-            <option value="isa" ${d.person==='isa'?'selected':''}>Isabelle</option>
-            <option value="joint" ${d.person==='joint'?'selected':''}>Joint</option>
-          </select>
+          <select data-field="person">${personOptionsHTML(d.person)}</select>
           <input type="text" data-field="name" value="${esc(d.name)}" placeholder="e.g. Roth 401k, HSA, medical insurance">
           <button type="button" class="dyn-remove" data-action="remove">×</button>
         </div>
@@ -1019,8 +1200,6 @@
     const months = years*12;
     const eventsToUse = eventsOverride !== undefined ? eventsOverride : state.lifeEvents.filter(e=>e.enabled);
 
-    const benBase = val('benIncome'), benYB = val('benYearlyBonus'), benQB = val('benQuarterlyBonus');
-    const isaBase = val('isaIncome'), isaYB = val('isaYearlyBonus');
     const rentBase = val('rent');
     const compG = val('compGrowth')/100, rentG = val('rentGrowth')/100, expG = val('expenseGrowth')/100;
     const assetG = val('assetGrowth')/100;
@@ -1057,11 +1236,13 @@
       const rentFactor = Math.pow(1+rentG, yearIdx);
       const expFactor = Math.pow(1+expG, yearIdx);
 
-      const benInc = benBase*compFactor;
-      const isaInc = isaBase*compFactor;
-      let bonus = 0;
-      if(monthInYear === 12) bonus += (benYB+isaYB)*compFactor;
-      if(monthInYear % 3 === 0) bonus += benQB*compFactor;
+      let grossIncome = 0;
+      state.earners.forEach(e=>{
+        grossIncome += (parseFloat(e.monthlyIncome)||0) * compFactor;
+      });
+      state.bonuses.forEach(b=>{
+        grossIncome += bonusPaidThisMonth(b, monthInYear) * compFactor;
+      });
 
       let eventIncomeAdj = 0, eventExpenseAdj = 0, eventLumpSum = 0;
       eventsToUse.forEach(ev=>{
@@ -1078,7 +1259,7 @@
         }
       });
 
-      const grossIncome = benInc + isaInc + bonus + eventIncomeAdj;
+      grossIncome += eventIncomeAdj;
 
       let deductionTotal = 0;
       const investDeductions = {};
@@ -1423,7 +1604,7 @@
   // PERSISTENCE
   // =========================================================
   function collectState(){
-    const s = { investMode: state.investMode, viewMode: state.viewMode, theme: theme, assets: state.assets, expenses: state.expenses, deductions: state.deductions, lifeEvents: state.lifeEvents, scalars:{} };
+    const s = { investMode: state.investMode, viewMode: state.viewMode, theme: theme, earners: state.earners, bonuses: state.bonuses, assets: state.assets, expenses: state.expenses, deductions: state.deductions, lifeEvents: state.lifeEvents, scalars:{} };
     scalarIds.forEach(id=> s.scalars[id] = document.getElementById(id).value);
     return s;
   }
@@ -1432,6 +1613,8 @@
     if(saved.scalars){
       scalarIds.forEach(id=>{ if(saved.scalars[id] !== undefined) document.getElementById(id).value = saved.scalars[id]; });
     }
+    if(Array.isArray(saved.earners) && saved.earners.length) state.earners = saved.earners;
+    if(Array.isArray(saved.bonuses)) state.bonuses = saved.bonuses;
     if(Array.isArray(saved.assets)) state.assets = saved.assets;
     // backfill liquidity fields for assets exported before this feature existed
     state.assets.forEach(a=>{
@@ -1445,7 +1628,6 @@
     });
     if(Array.isArray(saved.expenses)) state.expenses = saved.expenses;
     if(Array.isArray(saved.deductions)) state.deductions = saved.deductions;
-    // lifeEvents is new — older exports simply won't have it, so state.lifeEvents stays the default []
     if(Array.isArray(saved.lifeEvents)) state.lifeEvents = saved.lifeEvents;
     if(saved.investMode){
       state.investMode = saved.investMode;
@@ -1514,6 +1696,8 @@
         // no saved state yet
       }
     }
+    renderEarners();
+    renderBonuses();
     renderAssets();
     renderExpenses();
     renderDeductions();
@@ -1538,6 +1722,8 @@
       try{
         const parsed = JSON.parse(reader.result);
         applyState(parsed);
+        renderEarners();
+        renderBonuses();
         renderAssets();
         renderExpenses();
         renderDeductions();
