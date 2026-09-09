@@ -486,7 +486,7 @@
   </div>
 
   <p class="footnote">
-    Cash flow nets out estimated taxes (see the Taxes section for assumptions and overrides). Growth rates compound annually for income, deductions, rent, and expenses; asset growth compounds monthly. "Contributions only" liquidity is modeled like a Roth IRA — new contributions are immediately accessible, growth on top isn't until 59½ (a few thousand may be exempt for a first home; not modeled here). Roth 401(k)s follow stricter pro-rata rules in real life, so if you've marked one "contributions only," treat that number as optimistic. Numbers are estimates for planning, not financial or tax advice.
+    Cash flow nets out estimated taxes (see the Taxes section for assumptions and overrides). Growth rates compound annually for income, deductions, rent, and expenses; asset growth compounds monthly. If a month's cash flow goes negative, it draws down liquid assets first (brokerage, then accessible Roth contributions) rather than letting a phantom cash balance go negative — genuine debt only shows up once every liquid account is exhausted. "Contributions only" liquidity is modeled like a Roth IRA — new contributions are immediately accessible, growth on top isn't until 59½ (a few thousand may be exempt for a first home; not modeled here). Roth 401(k)s follow stricter pro-rata rules in real life, so if you've marked one "contributions only," treat that number as optimistic. Numbers are estimates for planning, not financial or tax advice.
   </p>
 
   <div class="savebar">
@@ -981,6 +981,9 @@
     // split auto-invest accounts into "brokerage" (fully liquid) vs "Roth-style" (contributions-only or restricted)
     const brokerageIds = autoInvestIds.filter(id => assetLiquidityMode[id]==='liquid');
     const rothIds = autoInvestIds.filter(id => assetLiquidityMode[id]!=='liquid');
+    // for drawing down on a shortfall, any liquid/Roth-basis account counts, not just ones flagged auto-invest
+    const allLiquidIds = state.assets.filter(a => assetLiquidityMode[a.id]==='liquid').map(a=>a.id);
+    const allBasisIds = state.assets.filter(a => assetLiquidityMode[a.id]==='basis').map(a=>a.id);
     let cash = 0;
 
     // ---- pass 1: monthly gross income, deductions, expenses & event effects (needed before tax can be computed per year) ----
@@ -1102,6 +1105,31 @@
         if(mode==='liquid') liquidBalances[id] = assetBalances[id];
         else if(mode==='basis') liquidBalances[id] = (liquidBalances[id]||0) + (contributionThisMonth[id]||0);
       });
+
+      // if cash flow went negative this month, cover it by drawing down liquid assets — brokerage first,
+      // then accessible Roth contributions — before ever letting "cash" go negative in isolation.
+      if(cash < 0){
+        let shortfall = -cash;
+        cash = 0;
+        for(const id of allLiquidIds){
+          if(shortfall <= 0) break;
+          const draw = Math.min(assetBalances[id]||0, shortfall);
+          assetBalances[id] -= draw;
+          liquidBalances[id] -= draw;
+          shortfall -= draw;
+        }
+        if(shortfall > 0){
+          for(const id of allBasisIds){
+            if(shortfall <= 0) break;
+            const draw = Math.min(liquidBalances[id]||0, shortfall);
+            assetBalances[id] -= draw;
+            liquidBalances[id] -= draw;
+            shortfall -= draw;
+          }
+        }
+        // anything still unmet means every liquid account is exhausted — that's genuine debt, so cash goes negative for real
+        if(shortfall > 0) cash = -shortfall;
+      }
 
       const netWorth = Object.values(assetBalances).reduce((a,b)=>a+b,0) + cash;
       const liquidNetWorth = Object.values(liquidBalances).reduce((a,b)=>a+b,0) + cash;
