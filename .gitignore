@@ -1,0 +1,8 @@
+# Personal exports — keep your real data out of the shared repo
+household-worksheet*.json
+!examples/
+
+# Local development artifacts from rebuilding history
+archive/
+
+.DS_Store

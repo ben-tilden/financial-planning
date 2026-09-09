@@ -1,0 +1,126 @@
+{
+  "investMode": "percent",
+  "viewMode": "year",
+  "theme": "light",
+  "assets": [
+    {
+      "id": "a1",
+      "name": "Alex Brokerage",
+      "balance": 100000,
+      "autoInvest": true,
+      "liquidityMode": "liquid",
+      "costBasis": 0
+    },
+    {
+      "id": "a2",
+      "name": "Jordan Brokerage",
+      "balance": 30000,
+      "autoInvest": true,
+      "liquidityMode": "liquid",
+      "costBasis": 0
+    },
+    {
+      "id": "a3",
+      "name": "Alex 401k",
+      "balance": 150000,
+      "autoInvest": false,
+      "liquidityMode": "restricted",
+      "costBasis": 0
+    },
+    {
+      "id": "a4",
+      "name": "Jordan 401k",
+      "balance": 175000,
+      "autoInvest": false,
+      "liquidityMode": "restricted",
+      "costBasis": 0
+    },
+    {
+      "id": "a5",
+      "name": "Alex Roth IRA",
+      "balance": 55000,
+      "autoInvest": false,
+      "liquidityMode": "basis",
+      "costBasis": 35000
+    },
+    {
+      "id": "a6",
+      "name": "Jordan Roth IRA",
+      "balance": 40000,
+      "autoInvest": false,
+      "liquidityMode": "basis",
+      "costBasis": 25000
+    },
+    {
+      "id": "a7",
+      "name": "Alex HSA",
+      "balance": 8000,
+      "autoInvest": false,
+      "liquidityMode": "restricted",
+      "costBasis": 0
+    }
+  ],
+  "expenses": [
+    { "id": "e1", "name": "Dining", "amount": 800 },
+    { "id": "e2", "name": "Entertainment", "amount": 300 },
+    { "id": "e3", "name": "Transportation", "amount": 500 },
+    { "id": "e4", "name": "Groceries", "amount": 900 },
+    { "id": "e5", "name": "Other", "amount": 1200 }
+  ],
+  "deductions": [
+    {
+      "id": "d1",
+      "person": "ben",
+      "name": "401k contribution",
+      "amount": 2000,
+      "kind": "invest",
+      "targetAssetId": "a3"
+    },
+    {
+      "id": "d2",
+      "person": "isa",
+      "name": "401k contribution",
+      "amount": 2000,
+      "kind": "invest",
+      "targetAssetId": "a4"
+    }
+  ],
+  "lifeEvents": [
+    {
+      "id": "le1",
+      "name": "Buy a home",
+      "enabled": true,
+      "startYear": 3,
+      "durationMode": "one-time",
+      "durationYears": 1,
+      "incomeDelta": 0,
+      "expenseDelta": 0,
+      "lumpSum": -80000
+    }
+  ],
+  "scalars": {
+    "benIncome": "12000",
+    "benYearlyBonus": "25000",
+    "benQuarterlyBonus": "10000",
+    "isaIncome": "7000",
+    "isaYearlyBonus": "12000",
+    "rent": "4000",
+    "compGrowth": "4",
+    "assetGrowth": "7",
+    "rentGrowth": "3",
+    "expenseGrowth": "3",
+    "investPct": "80",
+    "investFixed": "2000",
+    "rothSplitPct": "0",
+    "yearsSlider": "25",
+    "filingStatus": "mfj",
+    "fedStdDeduction": "29200",
+    "nyStdDeduction": "16050",
+    "fedTaxMode": "auto",
+    "fedTaxCustom": "0",
+    "nyTaxMode": "auto",
+    "nyTaxCustom": "0",
+    "nycTaxMode": "auto",
+    "nycTaxCustom": "0"
+  }
+}
