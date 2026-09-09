@@ -16,10 +16,31 @@
     --neg:#B5493B;
     --neg-soft:#F5E4E1;
     --muted:#6B7268;
+    --input-bg:#FDFCF9;
+  }
+  .wrap.dark{
+    --ink:#E9E7DD;
+    --paper:#161C18;
+    --panel:#1F2620;
+    --line:#39423A;
+    --ben:#6BBF93;
+    --ben-soft:#243128;
+    --isa:#E0A467;
+    --isa-soft:#33291D;
+    --gold:#E3B25C;
+    --neg:#E58274;
+    --neg-soft:#3A2521;
+    --muted:#9CA096;
+    --input-bg:#242B25;
   }
   *{box-sizing:border-box;}
   body{margin:0;padding:0;background:transparent;color:var(--ink);font-family:'Inter',system-ui,sans-serif;}
-  .wrap{max-width:720px;margin:0 auto;padding:20px 16px 60px;background:var(--paper);}
+  .wrap{max-width:720px;margin:0 auto;padding:20px 16px 60px;background:var(--paper);transition:background .2s ease,color .2s ease;}
+  .theme-toggle{
+    display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--line);border-radius:20px;
+    background:var(--panel);color:var(--ink);font-size:0.8rem;cursor:pointer;font-family:'Inter',sans-serif;float:right;
+  }
+  .header-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
   h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;margin:0;}
   h1{font-size:1.5rem;letter-spacing:-0.01em;}
   h2{font-size:1.05rem;margin-bottom:2px;}
@@ -60,7 +81,7 @@
   .field .prefix{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.92rem;}
   input[type=number],input[type=text],select{
     width:100%;padding:9px 11px 9px 24px;border:1px solid var(--line);border-radius:7px;
-    font-size:0.95rem;font-family:'Inter',sans-serif;background:#FDFCF9;color:var(--ink);
+    font-size:0.95rem;font-family:'Inter',sans-serif;background:var(--input-bg);color:var(--ink);
   }
   input[type=text],select{padding-left:11px;}
   input[type=number].pct{padding-left:11px;padding-right:24px;}
@@ -77,7 +98,7 @@
   .pillrow{display:flex;gap:6px;margin-top:10px;}
   .pill{
     flex:1;text-align:center;padding:8px 6px;border:1px solid var(--line);border-radius:7px;
-    font-size:0.82rem;cursor:pointer;background:#FDFCF9;color:var(--muted);
+    font-size:0.82rem;cursor:pointer;background:var(--input-bg);color:var(--muted);
   }
   .pill.active{background:var(--ben-soft);border-color:var(--ben);color:var(--ben);font-weight:600;}
 
@@ -90,7 +111,7 @@
   .dyn-row{
     display:grid;gap:8px;align-items:center;
     grid-template-columns:1fr 100px 26px;
-    padding:9px;border:1px solid var(--line);border-radius:8px;background:#FDFCF9;
+    padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--input-bg);
   }
   .dyn-row.with-check{grid-template-columns:1fr 90px auto 26px;}
   .dyn-row input[type=text]{padding:7px 9px;font-size:0.88rem;}
@@ -110,7 +131,7 @@
   .dyn-total{font-size:0.8rem;color:var(--muted);margin-top:8px;text-align:right;}
 
   .ded-row{
-    display:flex;flex-direction:column;gap:8px;padding:11px;border:1px solid var(--line);border-radius:8px;background:#FDFCF9;
+    display:flex;flex-direction:column;gap:8px;padding:11px;border:1px solid var(--line);border-radius:8px;background:var(--input-bg);
   }
   .ded-row .ded-top{display:grid;grid-template-columns:80px 1fr 26px;gap:8px;align-items:center;}
   .ded-row .ded-bottom{display:grid;grid-template-columns:100px 1fr;gap:8px;align-items:center;}
@@ -120,7 +141,7 @@
   .ded-row .input-wrap input{padding-left:20px;}
   .ded-row .input-wrap .prefix{left:8px;font-size:0.82rem;}
 
-  .tax-row{border:1px solid var(--line);border-radius:8px;background:#FDFCF9;padding:11px;margin-top:10px;}
+  .tax-row{border:1px solid var(--line);border-radius:8px;background:var(--input-bg);padding:11px;margin-top:10px;}
   .tax-row-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px;}
   .tax-label{font-size:0.88rem;font-weight:600;}
   .tax-estimate{font-size:0.8rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;}
@@ -129,7 +150,7 @@
   .tax-custom .prefix{left:8px;font-size:0.85rem;}
 
   .evt-row{
-    display:flex;flex-direction:column;gap:8px;padding:11px;border:1px solid var(--line);border-radius:8px;background:#FDFCF9;
+    display:flex;flex-direction:column;gap:8px;padding:11px;border:1px solid var(--line);border-radius:8px;background:var(--input-bg);
   }
   .evt-row .evt-top{display:grid;grid-template-columns:1fr auto 26px;gap:8px;align-items:center;}
   .evt-row .evt-mid{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end;}
@@ -154,7 +175,7 @@
   .life-summary b{font-family:'Fraunces',serif;}
 
   .asset-row{
-    display:flex;flex-direction:column;gap:8px;padding:11px;border:1px solid var(--line);border-radius:8px;background:#FDFCF9;
+    display:flex;flex-direction:column;gap:8px;padding:11px;border:1px solid var(--line);border-radius:8px;background:var(--input-bg);
   }
   .asset-row .asset-top{display:grid;grid-template-columns:1fr auto 26px;gap:8px;align-items:center;}
   .asset-row .asset-mid{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end;}
@@ -197,8 +218,11 @@
   }
 </style>
 
-<div class="wrap">
-  <h1>Ben &amp; Isabelle — Household Worksheet</h1>
+<div class="wrap" id="wrapEl">
+  <div class="header-row">
+    <h1>Ben &amp; Isabelle — Household Worksheet</h1>
+    <button type="button" class="theme-toggle" id="themeToggle"><span id="themeIcon">🌙</span> <span id="themeLabel">Dark</span></button>
+  </div>
   <p class="subtitle">Fill in income, expenses, and assets once, then tune the growth assumptions to see how net worth and monthly cash flow play out over time. Everything saves automatically.</p>
 
   <div class="summary">
@@ -379,7 +403,7 @@
         </div>
         <div class="field">
           <label>Rent increase</label>
-          <div class="input-wrap"><input type="number" class="pct" id="rentGrowth" value="3" step="0.1"><span class="suffix">%/yr</span></div>
+          <div class="input-wrap"><input type="number" class="pct" id="rentGrowth" value="6" step="0.1"><span class="suffix">%/yr</span></div>
         </div>
         <div class="field">
           <label>Expense increase</label>
@@ -619,6 +643,7 @@
   let state = defaultState();
   let netWorthChart, cashFlowChart, liquidChart;
   let saveTimer;
+  let theme = 'light';
 
   function val(id){ const el = document.getElementById(id); return parseFloat(el.value) || 0; }
   function fmt(n){
@@ -630,6 +655,24 @@
   function esc(s){
     return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
+
+  // ---- theme (dark mode) ----
+  const wrapEl = document.getElementById('wrapEl');
+  function applyTheme(){
+    wrapEl.classList.toggle('dark', theme === 'dark');
+    document.getElementById('themeIcon').textContent = theme === 'dark' ? '☀️' : '🌙';
+    document.getElementById('themeLabel').textContent = theme === 'dark' ? 'Light' : 'Dark';
+  }
+  document.getElementById('themeToggle').addEventListener('click', ()=>{
+    theme = theme === 'dark' ? 'light' : 'dark';
+    applyTheme();
+    recalc(); // rebuild charts with theme-appropriate colors
+  });
+  // default to the visitor's OS preference on first load, before any saved state is applied
+  if(typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
+    theme = 'dark';
+  }
+  applyTheme();
 
   // ---- section collapse ----
   document.querySelectorAll('[data-toggle]').forEach(head=>{
@@ -1252,16 +1295,21 @@
       if(hasEvents) baselineNetWorthSeries = baselineYearly.map(y=>y.netWorth);
     }
 
+    const isDark = theme === 'dark';
+    const chartMuted = isDark ? '#A7ABA0' : '#6B7268';
+    const chartGrid = isDark ? '#333B33' : '#EEEBDF';
+    const chartBaselineColor = isDark ? '#A7A297' : '#8A8578';
+
     const nwDatasets = [{
       label: hasEvents ? 'With life events' : 'Net worth',
       data: netWorthSeries, borderColor:'#2F6F4F', backgroundColor:'rgba(47,111,79,0.12)',
-      fill:true, tension:0.25, pointRadius:0, borderWidth:2
+      fill:true, tension:0.25, pointRadius:0, pointHitRadius:14, pointHoverRadius:4, borderWidth:2
     }];
     if(hasEvents){
       nwDatasets.push({
         label:'Baseline (no life events)',
-        data: baselineNetWorthSeries, borderColor:'#8A8578', backgroundColor:'transparent',
-        borderDash:[5,4], fill:false, tension:0.25, pointRadius:0, borderWidth:2
+        data: baselineNetWorthSeries, borderColor: chartBaselineColor, backgroundColor:'transparent',
+        borderDash:[5,4], fill:false, tension:0.25, pointRadius:0, pointHitRadius:14, pointHoverRadius:4, borderWidth:2
       });
     }
 
@@ -1272,9 +1320,11 @@
       data:{ labels, datasets: nwDatasets },
       options:{
         responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{display: hasEvents, position:'top', labels:{boxWidth:12, font:{size:10}, color:'#6B7268'}}, tooltip:{ callbacks:{ label: c=> (c.dataset.label?c.dataset.label+': ':'') + fmt(c.raw) } } },
-        scales:{ x:{ ticks:{ maxTicksLimit: useMonthly?8:12, color:'#6B7268', font:{size:10} }, grid:{display:false} },
-                 y:{ ticks:{ callback:v=>fmt(v), color:'#6B7268', font:{size:10} }, grid:{color:'#EEEBDF'} } }
+        interaction:{ mode:'index', intersect:false },
+        hover:{ mode:'index', intersect:false },
+        plugins:{ legend:{display: hasEvents, position:'top', labels:{boxWidth:12, font:{size:10}, color:chartMuted}}, tooltip:{ mode:'index', intersect:false, callbacks:{ label: c=> (c.dataset.label?c.dataset.label+': ':'') + fmt(c.raw) } } },
+        scales:{ x:{ ticks:{ maxTicksLimit: useMonthly?8:12, color:chartMuted, font:{size:10} }, grid:{display:false} },
+                 y:{ ticks:{ callback:v=>fmt(v), color:chartMuted, font:{size:10} }, grid:{color:chartGrid} } }
       }
     });
 
@@ -1288,9 +1338,10 @@
       }]},
       options:{
         responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: c=> fmt(c.raw) } } },
-        scales:{ x:{ ticks:{ maxTicksLimit: useMonthly?8:12, color:'#6B7268', font:{size:10} }, grid:{display:false} },
-                 y:{ ticks:{ callback:v=>fmt(v), color:'#6B7268', font:{size:10} }, grid:{color:'#EEEBDF'} } }
+        interaction:{ mode:'index', intersect:false },
+        plugins:{ legend:{display:false}, tooltip:{ mode:'index', intersect:false, callbacks:{ label: c=> fmt(c.raw) } } },
+        scales:{ x:{ ticks:{ maxTicksLimit: useMonthly?8:12, color:chartMuted, font:{size:10} }, grid:{display:false} },
+                 y:{ ticks:{ callback:v=>fmt(v), color:chartMuted, font:{size:10} }, grid:{color:chartGrid} } }
       }
     });
 
@@ -1313,25 +1364,33 @@
       type:'line',
       data:{ labels: liquidLabels, datasets:[{
         data: liquidSeries, borderColor:'#B98A2E', backgroundColor:'rgba(185,138,46,0.12)',
-        fill:true, tension:0.25, pointRadius:0, borderWidth:2
+        fill:true, tension:0.25, pointRadius:0, pointHitRadius:14, pointHoverRadius:4, borderWidth:2
       }]},
       options:{
         responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: c=> fmt(c.raw) } } },
-        scales:{ x:{ ticks:{ maxTicksLimit:12, color:'#6B7268', font:{size:10} }, grid:{display:false} },
-                 y:{ ticks:{ callback:v=>fmt(v), color:'#6B7268', font:{size:10} }, grid:{color:'#EEEBDF'} } }
+        interaction:{ mode:'index', intersect:false },
+        hover:{ mode:'index', intersect:false },
+        plugins:{ legend:{display:false}, tooltip:{ mode:'index', intersect:false, callbacks:{ label: c=> fmt(c.raw) } } },
+        scales:{ x:{ ticks:{ maxTicksLimit:12, color:chartMuted, font:{size:10} }, grid:{display:false} },
+                 y:{ ticks:{ callback:v=>fmt(v), color:chartMuted, font:{size:10} }, grid:{color:chartGrid} } }
       }
     });
 
     // ---- individual accounts by year ----
     const headRow = document.getElementById('accountsByYearHead');
-    headRow.innerHTML = '<th>Year</th>' + state.assets.map(a=>'<th>'+esc(a.name||'(unnamed)')+'</th>').join('') + '<th>Cash</th><th>Total</th>';
+    headRow.innerHTML = '<th>Point</th>' + state.assets.map(a=>'<th>'+esc(a.name||'(unnamed)')+'</th>').join('') + '<th>Cash</th><th>Total</th>';
     const byYearBody = document.querySelector('#accountsByYearTable tbody');
     byYearBody.innerHTML = '';
+    // "Today" row — your raw inputs, before any growth or contributions, so Yr 1 below can't be mistaken for it
+    const todayCells = state.assets.map(a=> '<td class="num">'+fmt(a.balance)+'</td>').join('');
+    const todayTotal = state.assets.reduce((s,a)=>s+(parseFloat(a.balance)||0),0);
+    const todayTr = document.createElement('tr');
+    todayTr.innerHTML = '<td><em>Today</em></td>'+todayCells+'<td class="num">$0</td><td class="num">'+fmt(todayTotal)+'</td>';
+    byYearBody.appendChild(todayTr);
     yearly.forEach(y=>{
       const cells = state.assets.map(a=> '<td class="num">'+fmt(y.assetBalances[a.id]||0)+'</td>').join('');
       const tr = document.createElement('tr');
-      tr.innerHTML = '<td>Yr '+y.year+'</td>'+cells+'<td class="num">'+fmt(y.cash)+'</td><td class="num">'+fmt(y.netWorth)+'</td>';
+      tr.innerHTML = '<td>End of Yr '+y.year+'</td>'+cells+'<td class="num">'+fmt(y.cash)+'</td><td class="num">'+fmt(y.netWorth)+'</td>';
       byYearBody.appendChild(tr);
     });
 
@@ -1342,11 +1401,12 @@
   // PERSISTENCE
   // =========================================================
   function collectState(){
-    const s = { investMode: state.investMode, viewMode: state.viewMode, assets: state.assets, expenses: state.expenses, deductions: state.deductions, lifeEvents: state.lifeEvents, scalars:{} };
+    const s = { investMode: state.investMode, viewMode: state.viewMode, theme: theme, assets: state.assets, expenses: state.expenses, deductions: state.deductions, lifeEvents: state.lifeEvents, scalars:{} };
     scalarIds.forEach(id=> s.scalars[id] = document.getElementById(id).value);
     return s;
   }
   function applyState(saved){
+    if(saved.theme === 'dark' || saved.theme === 'light'){ theme = saved.theme; applyTheme(); }
     if(saved.scalars){
       scalarIds.forEach(id=>{ if(saved.scalars[id] !== undefined) document.getElementById(id).value = saved.scalars[id]; });
     }
